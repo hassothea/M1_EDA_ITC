@@ -132,7 +132,7 @@ window.Quarto = {
 <hr>
 <p><strong>Objective:</strong> In this TP, you will learn how to implement SLR, MLR and enhance your practical skills in pushing the performance of your models on new unseen data using techniques introduced in the course.</p>
 <blockquote class="blockquote">
-<p><strong>The <code>Jupyter Notebook</code> for this Lab can be downloaded here: <a href="https://hassothea.github.io/M1_EDA_ITC/TPs/TP5_Linear_Regression.ipynb">TP5_Linear_Regression.ipynb</a></strong>.</p>
+<p><strong>The <code>Jupyter Notebook</code> for this Lab can be downloaded here: <a href="https://hassothea.github.io/M1_EDA_ITC/TPs/TP5_Linear_Regression.ipynb">Lab_Model_Evaluation_Refinement.ipynb</a></strong>.</p>
 </blockquote>
 <hr>
 <section id="importing-abalone-dataset" class="level2">
@@ -268,25 +268,144 @@ window.Quarto = {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                        test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>C.</strong> Fit a SLR model using the most correlated input to predict the <code>Rings</code> of abalone. - Draw the fitted line on the previous scatterplot. - Compute <span class="math inline">\(R^2\)</span> and explain the observed value. - Compute Mean Suared Error on the test data (Test MSE). - Analyze the residuals and conclude.</p>
+<p><strong>C.</strong> Fit a SLR model using the most correlated input to predict the <code>Rings</code> of abalone.</p>
+<ul>
+<li>Draw the fitted line on the previous scatterplot.</li>
+<li>Compute <span class="math inline">\(R^2\)</span> and explain the observed value.</li>
+<li>Compute Mean Suared Error on the test data (Test MSE).</li>
+<li>Analyze the residuals and conclude.</li>
+</ul>
 <div id="cell-15" class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>D.</strong> Fit MLR using all inputs. Compute: - Compute <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R_{\text{adj}}^2\)</span> and explain the observed value. - Compute Mean Suared Error on the test data (Test MSE). - Analyze the residuals and conclude.</p>
+<p><strong>D.</strong> Fit MLR using all inputs. Compute:</p>
+<ul>
+<li>Compute <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R_{\text{adj}}^2\)</span> and explain the observed value.</li>
+<li>Compute Mean Suared Error on the test data (Test MSE).</li>
+<li>Analyze the residuals and conclude.</li>
+</ul>
 </section>
 <section id="polynomial-regression-and-regularized-linear-models" class="level2">
 <h2 class="anchored" data-anchor-id="polynomial-regression-and-regularized-linear-models">3. Polynomial Regression and Regularized Linear Models</h2>
-<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case. - Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting">slide 47</a>.</p>
+<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case.</p>
+<ul>
+<li>Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting">slide 47</a>.</li>
+</ul>
 <div id="cell-18" class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>. - Compute Test MSE and compare it to the previous models.</p>
+<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>.</p>
+<ul>
+<li>Compute Test MSE and compare it to the previous models.</li>
+</ul>
 <div id="cell-20" class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>. - Compute Test MSE and compare it to the previous models. - How many inputs are retained by Lasso?</p>
+<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>.</p>
+<ul>
+<li>Compute Test MSE and compare it to the previous models.</li>
+<li>How many inputs are retained by Lasso?</li>
+</ul>
 <div id="cell-22" class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="auto-mpg-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="auto-mpg-dataset">4. Auto-MPG Dataset</h2>
+<p>Apply what you have learn to predict fuel efficiency (Miles Per Gallon, MPG) in vehicles of the kaggle <a href="https://www.kaggle.com/datasets/uciml/autompg-dataset">AUTO-MPG Dataset</a>.</p>
+<div id="cell-24" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> kagglehub</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> kagglehub.dataset_download(<span class="st">"uciml/autompg-dataset"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(path <span class="op">+</span> <span class="st">'/auto-mpg.csv'</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mpg</th>
+<th data-quarto-table-cell-role="th">cylinders</th>
+<th data-quarto-table-cell-role="th">displacement</th>
+<th data-quarto-table-cell-role="th">horsepower</th>
+<th data-quarto-table-cell-role="th">weight</th>
+<th data-quarto-table-cell-role="th">acceleration</th>
+<th data-quarto-table-cell-role="th">model year</th>
+<th data-quarto-table-cell-role="th">origin</th>
+<th data-quarto-table-cell-role="th">car name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>18.0</td>
+<td>8</td>
+<td>307.0</td>
+<td>130</td>
+<td>3504</td>
+<td>12.0</td>
+<td>70</td>
+<td>1</td>
+<td>chevrolet chevelle malibu</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>15.0</td>
+<td>8</td>
+<td>350.0</td>
+<td>165</td>
+<td>3693</td>
+<td>11.5</td>
+<td>70</td>
+<td>1</td>
+<td>buick skylark 320</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>18.0</td>
+<td>8</td>
+<td>318.0</td>
+<td>150</td>
+<td>3436</td>
+<td>11.0</td>
+<td>70</td>
+<td>1</td>
+<td>plymouth satellite</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>16.0</td>
+<td>8</td>
+<td>304.0</td>
+<td>150</td>
+<td>3433</td>
+<td>12.0</td>
+<td>70</td>
+<td>1</td>
+<td>amc rebel sst</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>17.0</td>
+<td>8</td>
+<td>302.0</td>
+<td>140</td>
+<td>3449</td>
+<td>10.5</td>
+<td>70</td>
+<td>1</td>
+<td>ford torino</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
 <section id="further-readings" class="level1">
