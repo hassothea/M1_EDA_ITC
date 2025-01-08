@@ -132,7 +132,7 @@ window.Quarto = {
 <hr>
 <p><strong>Objective:</strong> In this TP, you will learn how to implement SLR, MLR and enhance your practical skills in pushing the performance of your models on new unseen data using techniques introduced in the course.</p>
 <blockquote class="blockquote">
-<p><strong>The <code>Jupyter Notebook</code> for this Lab can be downloaded here: <a href="https://hassothea.github.io/M1_EDA_ITC/TPs/TP5_Linear_Regression.ipynb">Lab_Model_Evaluation_Refinement.ipynb</a></strong>.</p>
+<p><strong>The <code>Jupyter Notebook</code> for this Lab can be downloaded here: <a href="https://hassothea.github.io/M1_EDA_ITC/TPs/TP5_Linear_Regression.ipynb">TP5_Linear_Regression.ipynb</a></strong>.</p>
 </blockquote>
 <hr>
 <section id="importing-abalone-dataset" class="level2">
@@ -276,15 +276,15 @@ window.Quarto = {
 </section>
 <section id="polynomial-regression-and-regularized-linear-models" class="level2">
 <h2 class="anchored" data-anchor-id="polynomial-regression-and-regularized-linear-models">3. Polynomial Regression and Regularized Linear Models</h2>
-<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case. - Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting">slide 20</a>.</p>
+<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case. - Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting">slide 47</a>.</p>
 <div id="cell-18" class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>. - Compute Test MSE and compare it to the previous models.</p>
+<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>. - Compute Test MSE and compare it to the previous models.</p>
 <div id="cell-20" class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>. - Compute Test MSE and compare it to the previous models. - How many inputs are retained by Lasso?</p>
+<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>. - Compute Test MSE and compare it to the previous models. - How many inputs are retained by Lasso?</p>
 <div id="cell-22" class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
