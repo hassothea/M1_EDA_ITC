@@ -1,0 +1,2277 @@
+---
+title: "Linear Regression"
+subtitle: "<br>Exploratory Data Analysis & Unsupervised Learning<br><br>
+[![](./img/itc.png){width=125px}](https://itc.edu.kh/about-institute-of-technology-of-cambodia/){target='_blank'} &nbsp; &nbsp; &nbsp; [![](./img/AMS_logo.jpg){width=200px}](https://itc.edu.kh/home-ams/){target='_blank'} <br>"
+author: "Lecturer: HAS Sothea, PhD"
+toc-depth: 2
+format:
+    revealjs:
+        touch: true
+        controls: true
+        slide-number: c/t
+        logo: ./img/AMS_logo.png
+        theme: [default, custom.scss]
+        css: styles.css
+        include-in-header:
+            - text: |
+                <style>
+                #title-slide .title {
+                    font-size: 2em;
+                }
+                </style>
+        menu: false
+linestretch: 1em
+font-size: 6pt
+jupyter: python3
+---
+
+## 🗺️ Content
+
+- #### Motivation
+
+- #### Simple Linear Regresion
+
+- #### Multiple Linear Regression
+
+- #### Model Evaluation
+
+- #### Model refinement: Regularization
+
+# Motivation {background-color="#345a8b"} 
+
+```{python}
+path = "D:/Sothea_PC/Teaching_AUPP/Data_Analytics/Courses/data/faithful.csv" 
+path1 = "D:/Sothea_PC/Teaching_AUPP/Data_Analytics/Courses/data/marketing.rda"
+```
+
+## Motivation
+#### [Old Faithful dataset](https://bookdown.org/pkaldunn/DataFiles/OldFaithful.html){target="_blank"} ($272$ rows, $2$ columns)
+:::{.columns}
+:::{.column width="48%"}
+```{python}
+#| echo: true
+#| code-fold: true
+#| fig-align: center
+import pandas as pd                 # Import pandas package
+import seaborn as sns               # Package for beautiful graphs
+import matplotlib.pyplot as plt     # Graph management
+sns.set(style="whitegrid")          # Set grid background
+# path = "https://gist.githubusercontent.com/curran/4b59d1046d9e66f2787780ad51a1cd87/raw/9ec906b78a98cf300947a37b56cfe70d01183200/data.tsv"                       # The data can be found in this link
+df0 = pd.read_csv(path)              # Import it into Python
+df0.head(5)                        # Randomly select 4 points
+```
+:::
+
+:::{.column width="52%"}
+
+:::{.r-stack}
+
+![](./img/old_faithful.jpg){width="400px" height="290px" fig-align="center"}
+
+:::{.fragment}
+```{python}
+#| echo: true
+#| code-fold: true
+#| fig-align: center
+plt.figure(figsize=(5,3.2))                          # Define figure size
+sns.scatterplot(df0, x="waiting", y="eruptions")    # Create scatterplot
+plt.title("Old Faithful data from Yellowstone National Park, US", fontsize=10)    # Title
+plt.suptitle("Eruptions vs waiting times", fontsize=13, y=1)                 # Subtitle
+plt.show()
+```
+:::
+:::
+:::
+:::
+
+:::{.fragment}
+- The longer the wait, the longer duration of the eruption.
+:::
+
+## Motivation (2) {auto-animate="true"}
+#### [Marketing data](https://rdrr.io/github/kassambara/datarium/man/marketing.html){target="_blank"} ($200$ rows, $4$ columns)
+```{python}
+#| echo: true
+#| code-fold: true
+import pyreadr
+import pandas as pd
+df1 = pyreadr.read_r(path1)
+df1 = df1['marketing']
+df1.head(5)                        # Randomly select 4 points
+```
+
+:::{.fragment}
+🧐 How would you represnt everything in one graph?
+:::
+
+## Motivation (2) {visibility="uncounted" auto-animate="true"}
+#### [Marketing data](https://rdrr.io/github/kassambara/datarium/man/marketing.html){target="_blank"} ($200$ rows, $4$ columns)
+:::{.columns}
+:::{.column width="45%"}
+```{python}
+#| echo: true
+#| code-fold: true
+df1.head(5)                        # Randomly select 4 points
+```
+:::
+
+:::{.column width="55%"}
+```{python}
+#| echo: true
+#| code-fold: true
+import plotly.express as px
+fig = px.scatter_3d(df1, x="youtube", y="facebook", z="sales", 
+                    size="newspaper", color="newspaper",
+                    size_max=40)
+camera = dict(eye=dict(x=1, y=-1, z=1.2))
+fig.update_layout(title="Sales as a function of all ads",
+                  width=550, height=350,
+                  scene_camera=camera)
+```
+:::
+:::
+<br>
+
+:::{.fragment}
+- Increasing ads seems to boost sales!
+:::
+
+## Our Motivational Quote Today
+
+![](./img/cute_kid.png){height=500px fig-align="center" style="position: relative; bottom: -20px"}
+
+[“Where there is data smoke, there is business fire.” — [Thomas Redman](https://ecm.elearningcurve.com/Tom-Redman-s/127.htm){target="_blank"}]{.notes}
+
+## Some Notation
+### Data: input-target
+
+:::{.columns}
+:::{.column width="45%"}
+```{python}
+#| echo: false
+df1.head(5)
+```
+:::
+
+:::{.column width="45%"}
+:::{.fragment}
+$${\cal D}=\begin{bmatrix}
+X_1 & \dots & X_d & Y\\
+x_{11} & \dots & x_{1d} & y_1\\
+x_{21} & \dots & x_{2d} & y_2\\
+\vdots & \ddots & \vdots & \vdots\\
+x_{n1} & \dots & x_{nd} & y_n
+\end{bmatrix}$$
+:::
+:::
+:::
+:::{.fragment}
+- Our marketing data: $n=200$ and $d=3$.
+- Input $\text{x}_i=(x_{i1}, \dots,x_{id})\in\mathbb{R}^d$ with target $y_i$.
+:::
+
+## Model Development {.incremental}
+::: {.callout-tip icon="false"}
+### Objective
+:::{.r-stack}
+**Using input $\text{x}$ to predict its corresponding target $y$.**
+:::
+:::
+:::{.fragment}
+:::{.columns}
+:::{.column width="50%"}
+- Simple Linear Regression
+$$\begin{bmatrix}
+X\\
+x_1\\
+\vdots\\
+x_n\\
+\end{bmatrix}\leadsto\begin{bmatrix}
+Y\\
+y_1\\
+\vdots\\
+y_n\\
+\end{bmatrix}$$
+:::
+:::{.column width="50%"}
+- Multiple Linear Regression
+$$\begin{bmatrix}
+X_1 & \dots & X_d\\
+x_{1d} & \dots & x_{1d}\\
+\vdots & \ddots & \vdots\\
+x_{n1} & \dots & x_{nd}\\
+\end{bmatrix}\leadsto\begin{bmatrix}
+Y\\
+y_1\\
+\vdots\\
+y_n\\
+\end{bmatrix}$$
+:::
+:::
+:::
+
+# Simple Linear Regression {background-color="#345a8b"} 
+
+## Simple Linear Regression (SLR) {auto-animate="true"}
+- Predict $y$ using only a single input $\text{x}\in\mathbb{R}$.
+- **Model**: $\underbrace{\hat{y}}_{\text{predicted eruption}}=\beta_0+\beta_1\underbrace{\text{x}}_{\text{waiting}}$ for $\beta_0,\beta_1\in\mathbb{R}$.
+
+:::{.fragment}
+:::{.r-stack}
+```{python}
+#| echo: false
+#| fig-align: center
+
+import plotly.graph_objects as go
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import pandas as pd
+
+# Data for plotting
+x_wait = df0["waiting"].to_numpy().reshape(-1, 1)  # Replace with actual Old Faithful data column
+y_erup = df0['eruptions'].to_numpy()  # Replace with actual Old Faithful data column
+
+# Linear Regression
+lr = LinearRegression()
+lr.fit(x_wait, y_erup)
+a, b = lr.coef_[0], lr.intercept_
+
+# Generate coefficients list for different line fits
+coef_list = np.concatenate([[0.01], np.linspace(a / 2, 2 * a, 10)])
+
+x_min, x_max = np.min(x_wait), np.max(x_wait)
+y_min, y_max = np.min(y_erup), np.max(y_erup)
+x_fit = np.linspace(x_min * 0.8, x_max* 1.2, 2).reshape(-1, 1)
+
+idx = 210
+x_line = np.repeat(x_wait.flatten()[idx],2)
+# Create frames for polynomial fits
+frames = []
+for coef in coef_list:
+    y_fit = x_fit * coef + b
+    y_line = np.array([y_erup[idx], x_line[0] * coef + b])
+    frames.append(go.Frame(
+        data=[go.Scatter(x=x_wait.flatten(), y=y_erup, mode='markers', name='Faithful data',
+                         marker=dict(size=10)),
+              go.Scatter(x=x_line, y=y_line, mode='lines+markers', name='Error',
+                         line=dict(color="red", dash='dash'), visible="legendonly"),
+              go.Scatter(x=x_fit.flatten(), y=y_fit.flatten(), mode='lines', line=dict(color="#b6531a"),
+                         name='y={:.2f}x{:.2f}'.format(np.round(coef, 3), np.round(b, 3)))],
+        name=f'{np.round(coef, 2)}'
+    ))
+
+y_line = y_line = np.array([y_erup[idx], x_line[0] * coef_list[0] + b])
+# Add scatter plot and first polynomial fit to the initial figure
+fig = go.Figure(
+    data=[
+        go.Scatter(x=x_wait.flatten(), y=y_erup, mode='markers', name='Faithful data', marker=dict(size=10)),
+        go.Scatter(x=x_line, y=y_line, mode='lines+markers', name='Error',
+                         line=dict(color="red", dash='dash'), visible="legendonly"),
+        go.Scatter(x=x_fit.flatten(), y=x_fit.flatten() * coef_list[0]+b, mode='lines', line=dict(color="#b6531a"),
+                   name=f'y={np.round(coef_list[0], 2)}x{np.round(b, 2)}')
+    ],
+    layout=go.Layout(
+        title="Old Faithful Data with Different Fitted Lines",
+        xaxis=dict(title="Waiting Time", range=[x_min*0.8, x_max*1.1]),
+        yaxis=dict(title="Eruptions", range=[y_min*0.8, y_max*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": -0.05,
+            "y": 1.5,
+            "pad": {"r": 11, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "Coefficient: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{np.round(coef, 2)}",
+                       "method": "animate",
+                       "args": [[f'{np.round(coef, 2)}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for coef in coef_list]
+        }]
+    ),
+    frames=frames
+)
+
+fig.update_layout(height=370, width=800)
+
+fig.show()
+```
+:::
+:::
+
+## Simple Linear Regression (SLR) {visibility="uncounted" auto-animate="true"}
+
+:::{.columns}
+:::{.column width="50%"}
+```{python}
+fig.update_layout(height=430, width=460)
+fig.show()
+```
+:::
+:::{.column width="50%" .fragment}
+- `Residual Sum of Squares`:
+$\begin{align*}
+\text{RSS}&=\sum_{i=1}^n(\color{red}{y_i-\hat{y}_i})^2\\
+&=\sum_{i=1}^n(\color{red}{y_i-\beta_0-\beta_1x_i})^2
+\end{align*}$
+
+:::{.callout-tip appearance="simple" .vbr}
+**Ordinary Least Squares (OLS):** <br> The best-fitted line minimizes **RSS**.
+:::
+:::
+:::
+
+- **Model**: $\underbrace{\hat{y}}_{\text{predicted eruption}}=\beta_0+\beta_1\underbrace{\text{x}}_{\text{waiting}}$ for $\beta_0,\beta_1\in\mathbb{R}$.
+
+## Simple Linear Regression (SLR)
+
+```{python}
+def rss(ai,bi):
+    return np.mean((y_erup-bi-ai*x_wait.flatten()) ** 2)
+
+a_grid, b_grid = np.linspace(0,0.16,30), np.linspace(-2, -1.5, 30)
+RSS = np.array([[rss(ai, bi) for bi in b_grid] for ai in a_grid])
+fig1 = go.Figure(go.Surface(x=a_grid, y=b_grid, z=RSS, hovertemplate='β1: %{x}<br>' +
+                                                        'β0: %{y}<br>' +
+                                                        'RSS: %{z}<extra></extra>'))
+fig1.update_scenes(xaxis_title_text= r"β1",  
+                   yaxis_title_text= r"β0",  
+                   zaxis_title_text="RSS")
+fig1.update_layout(title=r"$\text{RSS as a function of }\beta_0\text{ and }\beta_1$")
+fig1.show()
+```
+
+## Simple Linear Regression (SLR)
+### Optimal Least-square line
+
+:::{.callout-tip}
+### Optimal Least-Square Line
+**Optimal line**: $\hat{y}=\hat{\beta}_0+\hat{\beta}_1\text{x}$ where
+
+$$\begin{align}
+\hat{\beta}_1&=\frac{\sum_{i=1}^n(\text{x}_i-\overline{\text{x}}_n)(y_i-\overline{y}_n)}{\sum_{i=1}^n(\text{x}_i-\overline{\text{x}}_n)^2}=\frac{\text{Cov}(X,Y)}{\text{V}(X)}\\
+\hat{\beta}_0&=\overline{y}_n-\hat{\beta}_1\overline{\text{x}}_n\end{align},
+$$
+with 
+
+- $\overline{\text{x}}_n=\frac{1}{n}\sum_{i=1}^n\text{x}_i$ and $\overline{y}_n=\frac{1}{n}\sum_{i=1}^ny_i$ be the average/mean of $X$ and $Y$ resp.
+- $\text{Cov}(X,Y)=\frac{1}{n}\sum_{i=1}^n(\text{x}_i-\overline{\text{x}}_n)(y_i-\overline{y}_n)$ be the "covariance" between $X$ & $Y$.
+- $\text{V}(X)=\frac{1}{n}\sum_{i=1}^n(\text{x}_i-\overline{\text{x}}_n)^2$ be the "variance" of $X$.
+
+:::
+
+## Simple Linear Regression (SLR) {auto-animate="true"}
+### Apply on marketing data
+
+```{python}
+frames = []
+frames.append(go.Frame(
+        data=[go.Scatter3d(x=df1['youtube'], y=df1['facebook'], z=df1['sales'], 
+        mode="markers", marker = dict(size=df1['newspaper']/4))],
+        name = "sales vs all"
+    ))
+
+frames.append(go.Frame(
+        data=[go.Scatter3d(x=df1["youtube"], y=np.repeat(0, df1.shape[0]), z=df1['sales'], mode='markers', name='Marketing data',
+                         marker=dict(size=3))],
+        name='sales vs youtube'
+    ))
+frames.append(go.Frame(
+        data=[go.Scatter3d(x=np.repeat(0, df1.shape[0]), y=df1['facebook'], z=df1['sales'], mode='markers', name='Marketing data',
+                         marker=dict(size=3))],
+        name='sales vs facebook'
+    ))
+
+# Add scatter plot and first polynomial fit to the initial figure
+
+fig_market = go.Figure(
+    data=[
+        go.Scatter3d(x=df1['youtube'], y=df1['facebook'], z=df1['sales'], 
+        mode="markers", marker = dict(size=df1['newspaper']/5),
+        name = "sales vs all")
+    ],
+    layout=go.Layout(
+        title="Sales vs all ads",
+        xaxis=dict(title="youtube", range=[np.min(df1["youtube"])*0.9, np.max(df1["youtube"])*1.1]),
+        yaxis=dict(title="facebook", range=[np.min(df1["facebook"])*0.9, np.max(df1["facebook"])*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0.1,
+            "y": 1.2,
+            "pad": {"r": 3, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "Ads: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{coef}",
+                       "method": "animate",
+                       "args": [[f'{coef}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for coef in ["sales vs all", "sales vs youtube", "sales vs facebook"]]
+        }]
+    ),
+    frames=frames
+)
+
+fig_market.update_layout(height=500, width=800, scene_camera=camera)
+fig_market.update_scenes(xaxis_title_text= "Youtube",  
+                   yaxis_title_text= "Facebook",  
+                   zaxis_title_text="Sales")
+
+fig_market.show()
+```
+
+## Simple Linear Regression (SLR) {auto-animate="true"}
+### Apply on marketing data (cont.)
+:::{.columns}
+:::{.column width="40%"}
+```{python}
+fig_market.update_layout(height=450, width=400)
+```
+:::
+
+:::{.column width="60%"}
+```{python}
+#| echo: true
+#| code-fold: true
+from sklearn.linear_model import LinearRegression  # import model
+lr = LinearRegression()                 # initiate model
+x_train, y_train = df1[['youtube']], df1['sales']  # training input-target
+lr = lr.fit(x_train, y_train)         # build model = esimate coefficients
+
+# Training data and fitted line
+pred_train = lr.predict(x_train)
+
+# Figures
+fig_market2 = go.Figure(go.Scatter(x=x_train.youtube, y=y_train, mode="markers", name="Training data"))
+fig_market2.add_trace(go.Scatter(x=x_train.youtube, y=pred_train, mode="lines+markers", name=f"<br>Train prediction<br> Sale={np.round(lr.coef_,2)[0]}youtube+{np.round(lr.intercept_,2)}"))
+fig_market2.update_layout(title="Sales vs youtube",
+                          xaxis=dict(title="youtube"),
+                          yaxis=dict(title="sales"),
+                          width=600, height=400)
+fig_market2.show()
+```
+:::
+:::
+
+## Simple Linear Regression (SLR)
+### Model Diagnostics (judging the model)
+- **R-squared (coefficient of determination)** 
+$$R^2=1-\frac{\text{RSS}}{\text{TSS}}=1-\frac{\sum_{i=1}(y_i-\hat{y}_i)^2}{\sum_{i=1}(y_i-\overline{y}_n)^2}=\frac{\text{V}(\hat{Y})}{\text{V}(Y)}.$$
+    - Example: $R^2=$ `{python} np.round(np.var(pred_train)/np.var(y_train),3)` in our model.
+    - Interpretation: The model (`youtube`) can capture around `{python} np.round(np.var(pred_train)/np.var(y_train),2)*100`% of the variation of the target (`sales`).
+
+<!--
+- **Test Root Mean Squared Error (out-sample RMSE)**:
+$$\text{RMSE}=\sqrt{\frac{1}{n_{\text{test}}}\sum_{i=1}^{n_{\text{test}}}(y_i-\hat{y}_i)^2}$$
+
+-->
+
+## Simple Linear Regression (SLR)
+### Model Diagnostics (judging the model)
+- **Residuals**: $e_i=y_i-\hat{y}_i\sim{\cal N}(0,\sigma^2)$ for some $\sigma>0$.
+    - Symmetric around $0$ & do **NOT** depend on $\text{x}_i$ nor $y_i$.
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| code-fold: true
+
+res = pred_train-y_train   # Compute residuals
+
+from plotly.subplots import make_subplots
+
+fig_res = make_subplots(rows=1, cols=2, subplot_titles=("Residuals vs predicted sales", "Residual desity"))
+
+fig_res.add_trace(
+    go.Scatter(x=pred_train, y=res, name="Residuals", mode="markers"), 
+    row=1, col=1)
+fig_res.add_trace(
+    go.Scatter(x=[np.min(pred_train), np.max(pred_train)], y=[0,0], mode="lines", line=dict(color='red', dash="dash"), name="0"), 
+    row=1, col=1)
+
+fig_res.update_xaxes(title_text="Predicted Sales", row=1, col=1)
+fig_res.update_yaxes(title_text="Residuals", row=1, col=1)
+
+
+fig_res.add_trace(
+    go.Histogram(x=res, name = "Residual histogram"), row=1, col=2
+)
+fig_res.update_xaxes(title_text="Residual", row=1, col=2)
+fig_res.update_yaxes(title_text="Histogram", row=1, col=2)
+
+fig_res.update_layout(width=950, height=250)
+fig_res.show()
+```
+
+## Simple Linear Regression (SLR)
+### SLR on Marketing Data
+:::{.callout-tip icon="false"}
+### Summary
+- Obtained model: `Sales` = `{python} np.round(lr.coef_[0],3)` `YouTube` + `{python} np.round(lr.intercept_,3)`.
+- Coefficient $\beta_1=$ `{python} np.round(lr.coef_[0],3)` indicates that `Sales` is expected to increase (or decrease) by `{python} np.round(lr.coef_[0],3)` units for every $1$ unit increase (or decrease) in `YouTube` ads.
+- **R-squared**: Represents the proportion of the target's variation captured by the model.
+- **Residual**: In a good model, the residuals should be random noise, indicating the model has captured most of the information from the target.
+- Marketing example:
+    - The amount in ad on YouTube alone can explain around $61$% (R-squared) of the variation in sales. 
+    - However, the residuals still contain patterns (large errors at small and large predicted sales), suggesting the model can be improved.
+:::
+
+# Multiple Linear Regression {background-color="#345a8b"} 
+
+## Correlation Matrix
+
+:::{.callout-tip icon="false"}
+### Pearson's correlation coefficient
+- Correlation between two columns $X_1$ and $X_2$: $$r=r_{X_1,X_2}=\frac{\sum_{i=1}^n(x_{i1}-\overline{x}_{1})(x_{i2}-\overline{x}_{2})}{\sqrt{\left(\sum_{i=1}^n(x_{i1}-\overline{x}_{1})^2\right)\left(\sum_{i=1}^n(x_{i2}-\overline{x}_{2})^2\right)}}$$
+    - $-1\leq r\leq 1$ for any pair $X_1$ and $X_2$.
+    - If $r\approx 1$, then $X_1$ and $X_2$ are positively correlated (one ↗️, another ↗️).
+    - If $r\approx -1$, then $X_1$ and $X_2$ are negatively correlated (one ↗️, another ↘️)
+    - If $r\approx 0$, then $X_1$ and $X_2$ are decorrelated (no pattern or relation).
+- It helps identifying informative/useful inputs for the building models.
+- It also helps identifying redundant (strongly correlated) inputs.
+- **Note**: Correlation does not imply `causation`; it only indicates a relationship, not a cause-and-effect link.
+:::
+
+## Correlation matrix
+### Examples
+
+![](./img/cor.png){width="650" fig-align="center"}
+
+## Correlation Matrix
+### Example: marketing data
+
+```{python}
+#| echo: true
+#| code-line-numbers: "1|2"
+cor = df1.corr()   # df1 is the marketing data
+cor.style.background_gradient()
+```
+
+:::{.hline}
+:::{style="font-size: 0.9em;" .fragment}
+- `YouTube` is strongly correlated with target `Sales` and is most useful for building models, followed by `Facebook` and `Newspaper`.
+- `Facebook` and `Newspaper` have a significantly larger correlation with each other than with `YouTube`.
+:::
+:::
+
+## Multiple Linear Regression (MLR) {auto-animate="true"}
+:::{style="font-size: 90%"}
+- Predict $y$ using more than one input $\text{x}\in\mathbb{R}^d$.
+- **Model**: $\underbrace{\hat{y}}_{\text{Sales}}=\beta_0+\beta_1\underbrace{x_1}_{\text{FB}}+\beta_2\underbrace{x_2}_{\text{NP}}$ for $\beta_0,\beta_1,\beta_2\in\mathbb{R}$.
+- Find the optimal $\vec{\beta}=[\beta_0,\beta_1,\beta_2]$ by minimizing **RSS**:
+$$\text{RSS}=\sum_{i=1}^n(\color{red}{y_i-\hat{y}_i})^2=\Big\|\overbrace{\begin{bmatrix}\color{red}{y_1}\\ 
+y_2\\
+\vdots\\
+y_n\end{bmatrix}}^{Y}-\overbrace{\begin{bmatrix}
+\color{red}{1} & \color{red}{x_{11}} & \color{red}{x_{12}}\\
+1 & x_{21} & x_{22}\\
+\vdots & \ddots & \vdots\\
+1 & x_{n1} & x_{n2}\end{bmatrix}}^{X}\overbrace{\begin{bmatrix}\color{red}{\beta_0}\\
+\color{red}{\beta_1}\\
+\color{red}{\beta_2}\end{bmatrix}}^{\vec{\beta}}\|^2$$
+:::
+
+## Multiple Linear Regression (MLR) {auto-animate="true"}
+:::{style="font-size: 90%"}
+- Find the optimal $\vec{\beta}=[\beta_0,\beta_1,\beta_2]$ by minimizing **RSS**:
+$$\text{RSS}=\sum_{i=1}^n(\color{red}{y_i-\hat{y}_i})^2=\Big\|\overbrace{\begin{bmatrix}\color{red}{y_1}\\ 
+y_2\\
+\vdots\\
+y_n\end{bmatrix}}^{Y}-\overbrace{\begin{bmatrix}
+\color{red}{1} & \color{red}{x_{11}} & \color{red}{x_{12}}\\
+1 & x_{21} & x_{22}\\
+\vdots & \ddots & \vdots\\
+1 & x_{n1} & x_{n2}\end{bmatrix}}^{X}\overbrace{\begin{bmatrix}\color{red}{\beta_0}\\
+\color{red}{\beta_1}\\
+\color{red}{\beta_2}\end{bmatrix}}^{\vec{\beta}}\|^2$$
+- Minimizing above **RSS**, we obtain [`Normal Equation`](https://www.datacamp.com/tutorial/tutorial-normal-equation-for-linear-regression): 
+$$\color{blue}{\hat{\beta}=(X^tX)^{-1}X^tY}\in\mathbb{R}^{d+1},\text{ with } d=2.$$
+:::
+
+## Multiple Linear Regression (MLR) {auto-animate="true"}
+
+- Minimizing above **RSS**, we obtain [`Normal Equation`](https://www.datacamp.com/tutorial/tutorial-normal-equation-for-linear-regression): 
+$$\color{blue}{\hat{\beta}=(X^tX)^{-1}X^tY}\in\mathbb{R}^{d+1},\text{ with } d=2.$$
+- Prediction: $$\hat{Y}=X\color{blue}{\hat{\beta}}=\underbrace{\color{blue}{X(X^tX)^{-1}X^t}}_{\text{Projection Matrix}}Y.$$
+
+. . .
+
+> The `prediction` $\hat{Y}$ of $Y$ by MLR is the `projection` of the target $Y$ onto the **subspace** spanned by columns of $X$.
+
+## Multiple Linear Regression (MLR) {auto-animate="true"}
+### MLR in action
+
+```{python}
+#| echo: true
+#| code-fold: true
+from sklearn.linear_model import LinearRegression
+mlr = LinearRegression()
+x_train, y_train = df1[["facebook", "newspaper"]], df1.sales
+mlr.fit(x_train, y_train)      # Fit model
+y_hat = mlr.predict(x_train)   # Predict
+
+x_surf0 = np.array([[np.min(x_train.facebook), np.min(x_train.newspaper)], 
+                   [np.max(x_train.facebook), np.min(x_train.newspaper)],
+                   [np.min(x_train.facebook), np.max(x_train.newspaper)],
+                   [np.max(x_train.facebook), np.max(x_train.newspaper)]])
+y_surf = mlr.predict(x_surf0).reshape(2,2)
+x_surf = np.array([[np.min(x_train.facebook), np.min(x_train.newspaper)], 
+                   [np.max(x_train.facebook), np.max(x_train.newspaper)]])
+frames = []
+frames.append(
+    go.Frame(
+        data=[go.Scatter3d(x=x_train.facebook,
+                           y=x_train.newspaper,
+                           z=y_train,
+                           mode="markers",
+                           marker=dict(size=5),
+                           hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>'),
+        go.Surface(x=x_surf[:,0],
+                   y=x_surf[:,1],
+                   z=y_surf,
+                   hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>')],
+        name=f"Level: 0"
+    ))
+
+alpha = np.linspace(0,1,10)
+for alp in alpha[1:]:
+    y_proj = y_train + alp * (y_hat - y_train)
+    frames.append(go.Frame(
+        data=[go.Scatter3d(x=x_train.facebook,
+                            y=x_train.newspaper,
+                            z=y_proj,
+                            mode="markers",
+                            marker=dict(size=5),
+                            hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>'),
+        go.Surface(x=x_surf[:,0],
+                   y=x_surf[:,1],
+                   z=y_surf,
+                   hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>')],
+        name=f"Level: {np.round(alp,3)}"
+    ))
+
+# Add scatter plot and first polynomial fit to the initial figure
+
+fig_mlr = go.Figure(
+    data=[
+        go.Scatter3d(x=x_train.facebook,
+                               y=x_train.newspaper,
+                               z=y_train,
+                               mode="markers",
+                               marker=dict(size=5),
+                               hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>'),
+        go.Surface(x=x_surf[:,0],
+                   y=x_surf[:,1],
+                   z=y_surf,
+                   hovertemplate='facebook: %{x}<br>' + 
+                                         'newspaper: %{y}<br>' +
+                                         'sales: %{z}<extra></extra>')
+    ],
+    layout=go.Layout(
+        title=f"Sales = {np.round(mlr.intercept_,3)}+{np.round(mlr.coef_[0],3)}Facebook+{np.round(mlr.coef_[1],3)}Newspaper",
+        xaxis=dict(title="Facebook", range=[np.min(df1["facebook"])*0.9, np.max(df1["facebook"])*1.1]),
+        yaxis=dict(title="Newspaper", range=[np.min(df1["newspaper"])*0.9, np.max(df1["newspaper"])*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0.1,
+            "y": 1.2,
+            "pad": {"r": 3, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "Project "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"Level: {np.round(alp,3)}",
+                       "method": "animate",
+                       "args": [[f"Level: {np.round(alp,3)}"], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for alp in alpha]
+        }]
+    ),
+    frames=frames
+)
+
+fig_mlr.update_layout(height=450, width=800, scene_camera=camera,
+                    scene=dict(
+                            zaxis=dict(title="Sales", range=[np.min(df1.sales)*0.9, np.max(df1.sales)*1.1])
+                        ))
+
+fig_mlr.update_scenes(xaxis_title_text= "Facebook",  
+                    yaxis_title_text= "Newspaper",  
+                    zaxis_title_text="Sales"
+)
+fig_mlr.show()
+```
+
+## Multiple Linear Regreesion (MLR)
+### Model Diagnostics
+:::{.incremental style="font-size: 90%"}
+- Look at **R-squared** just like in SLR.
+- A better criterion, **Adjusted R-squared**: 
+$$R^2_{\text{adj}}=1-\frac{n-1}{n-d-1}(1-R^2).$$
+Here, $n$ is the number of obs, $d$ is the number of inputs.
+- For our built model: $R^2=$ `{python} np.round(np.var(y_hat)/np.var(y_train),3)` and $R^2_{\text{adj}}=$ `{python} np.round(1-(len(y_train)-1)/(len(y_train)-3)*(1-np.var(y_hat)/np.var(y_train)),3)` (not so good!).
+- $R^2_{\text{adj}}$ is always smaller than $R^2$. A large $R^2$ with only a slight decrease in $R^2_{\text{adj}}$ indicates a good MLR model.
+:::
+
+## Multiple Linear Regreesion (MLR)
+### Model Diagnostics (cont.)
+- Check **Residuals**...
+
+```{python}
+#| echo: true
+#| code-fold: true
+#| fig-align: center
+
+resid = y_train - y_hat   # residuals
+
+from plotly.subplots import make_subplots
+
+fig_res = make_subplots(rows=1, cols=2, subplot_titles=("Residuals vs predicted sales", "Residual desity"))
+
+fig_res.add_trace(
+    go.Scatter(x=y_hat, y=resid, name="Residuals", mode="markers"), 
+    row=1, col=1)
+fig_res.add_trace(
+    go.Scatter(x=[np.min(y_hat), np.max(y_hat)], y=[0,0], mode="lines", line=dict(color='red', dash="dash"), name="0"), 
+    row=1, col=1)
+
+fig_res.update_xaxes(title_text="Predicted Sales", row=1, col=1)
+fig_res.update_yaxes(title_text="Residuals", row=1, col=1)
+
+
+fig_res.add_trace(
+    go.Histogram(x=resid, name = "Residual histogram"), row=1, col=2
+)
+fig_res.update_xaxes(title_text="Residual", row=1, col=2)
+fig_res.update_yaxes(title_text="Histogram", row=1, col=2)
+
+fig_res.update_layout(width=950, height=350)
+fig_res.show()
+```
+
+## Multiple Linear Regreesion (MLR)
+### MLR on Marketing Data
+:::{.callout-tip icon="false"}
+### Summary
+- Obtained model: `Sales` = `{python} np.round(mlr.intercept_,3)`+`{python} np.round(mlr.coef_[0],3)` `Facebook`+`{python} np.round(mlr.coef_[1],3)` `Newspaper`.
+- *Rough interpretion*, $\beta_1=$ `{python} np.round(mlr.coef_[0],3)` indicates that if `facebook` ad is increased (or decreased) by $1$ unit, `sales` is expected to increase (or decrease) by `{python} np.round(mlr.coef_[0],3)` units. 
+- Explain: $\beta_2=$ `{python} np.round(mlr.coef_[1],3)`.
+- $R^2=$ `{python} np.round(np.var(y_hat)/np.var(y_train),3)` indicates that around $33.33$% variation of the sales can be explained by ads on `Facebook` and `Newspaper` together, which is not enough to be a good model!
+- A slight decrease in $R^2_{\text{adj}}=$ `{python} np.round(1-(len(y_train)-1)/(len(y_train)-3)*(1-np.var(y_hat)/np.var(y_train)),3)` suggests that the information provided by both variables is not redundant for explaining sales.
+- There are some large negative values of residuals, indicating that the model overestimated some actual target especially around large sales.
+:::
+
+## What's next?
+- Use standardized inputs: $\text{x}_i\to \tilde{\text{x}}_i=\frac{\text{x}_i-\overline{\text{x}}_i}{\hat{\sigma}_{\text{x}_i}}$
+- Transform the target using, for example, [`box-cox` transformation](https://builtin.com/data-science/box-cox-transformation-target-variable){target="_blank"}:
+
+:::{.columns}
+:::{.column width="55%"}
+$y_i\to \tilde{y}=\begin{cases}\frac{y_i^{\lambda}-1}{\lambda}&\text{if }\lambda\neq 0\\
+\log(y_i)&\text{if }\lambda=0.\end{cases}$
+
+- It can reduce outliers
+- Improve `normality`
+- Smooth out the target
+- More in the next chapter...
+
+:::
+
+:::{.column width="45%"}
+
+```{python}
+#| echo: false
+from scipy.stats import boxcox
+y_transformed = np.log(df1.sales)
+frames = []
+frames.append(go.Frame(
+        data=[go.Scatter(x=df1['youtube'], y=df1['sales'], 
+        mode="markers", marker = dict(size=df1['facebook']/4))],
+        name = "sales vs youtube (not transformed)"
+    ))
+
+lambdas = np.linspace(0.95,0.001, 10)
+
+for lmd in lambdas:
+    frames.append(go.Frame(
+        data=[go.Scatter(x=df1["youtube"], y=boxcox(y_train, lmbda=lmd), 
+        mode='markers', marker = dict(size=df1['facebook']/4),
+        name='Marketing data')],
+        name=f'Lambda: {np.round(lmd, 3)}'
+    ))
+
+# Add scatter plot and first polynomial fit to the initial figure
+
+fig = go.Figure(
+    data=[
+        go.Scatter(x=df1['youtube'], y=df1['sales'], 
+        mode="markers", marker = dict(size=df1['facebook']/4),
+        name = "sales vs youtube (not transformed)")
+    ],
+    layout=go.Layout(
+        title="Sales tranformation",
+        xaxis=dict(title="youtube", range=[np.min(df1["youtube"])*0.9, np.max(df1["youtube"])*1.1]),
+        yaxis=dict(title="sales", range=[np.min(df1["sales"])*0.9, np.max(df1["sales"])*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0.1,
+            "y": 1.2,
+            "pad": {"r": 11, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": ""},
+            "pad": {"t": 50},
+            "steps": [{"label": val,
+                       "method": "animate",
+                       "args": [[val], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for val in ["sales vs youtube (not transformed)"] + [f'Lambda: {np.round(x, 3)}' for x in lambdas]]
+        }]
+    ),
+    frames=frames
+)
+
+fig.update_layout(height=400, width=450, scene_camera=camera)
+fig.update_scenes(xaxis_title_text= "Youtube",   
+                   zaxis_title_text="Sales")
+
+fig.show()
+```
+:::
+:::
+
+
+
+
+
+# Model Evaluation {background-color="#345a8b"} 
+## Out-of-sample MSE
+- A good model must not only performs well on the `training data` (used to build it), but also on `unseen observations`.
+
+- We should judge a model based on how it generalizes on `new unseen` observations.
+
+:::{.fragment}
+:::{.columns}
+:::{.column width="40%"}
+- Out-of-sample Mean Squared Error (MSE): $$\color{green}{\frac{1}{n_{\text{new}}}\sum_{1=1}^{n_{\text{new}}}(y_i-\hat{y}_i)^2}.$$
+:::
+
+:::{.column width="60%"}
+- In practice: 
+    - Train data $\approx75\%-80\%\to$ for `building` the model.
+    - Test data $\approx20\%-25\%\to$ for `testing` the model.
+:::
+:::
+:::
+
+
+## Out-of-sample MSE {visibility="uncounted"}
+- A good model must not only performs well on the `training data` (used to build it), but also on `unseen observations`.
+
+- We should judge a model based on how it generalizes on `new unseen` observations.
+
+:::{.columns}
+:::{.column width="40%"}
+- Out-of-sample Mean Squared Error (MSE): $$\color{green}{\frac{1}{n_{\text{new}}}\sum_{1=1}^{n_{\text{new}}}(y_i-\hat{y}_i)^2}.$$
+:::
+
+:::{.column width="60%"}
+```{python}
+#| echo: true
+#| code-fold: true
+import pyreadr
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from sklearn.metrics import mean_squared_error
+
+market = pyreadr.read_r(path1)
+market = market['marketing']
+shuffle_id = np.random.choice(['train', 'test'], 
+                                    replace=True, 
+                                    p=[0.75, 0.25], 
+                                    size=market.shape[0])
+market['type'] = shuffle_id
+
+# Model
+from sklearn.linear_model import LinearRegression
+lr1 = LinearRegression().fit(market.loc[market.type == "train", ['youtube']], market.loc[market.type == "train", "sales"])
+
+y_hat = lr1.predict(market.loc[market.type == "test", ['youtube']])
+
+import plotly.express as px
+import plotly.graph_objects as go
+fig1 = px.scatter(data_frame=market,
+            x="youtube",
+            y="sales",
+            color="type",
+            color_discrete_map={
+                "train": "#e89927", 
+                "test": "#3bbc35"
+            })
+fig1.add_trace(go.Scatter(x=market.loc[market.type == "test", 'youtube'],
+                          y=y_hat,
+                          name="Model built on train data",
+                          line=dict(color="#e89927")))
+
+fig1.update_layout(width=600, height=250, title="SLR Model: Sales vs Youtube")
+fig1.show()
+```
+:::
+:::
+
+![](./img/train_test.png){height=40px fig-align="center" style="position: relative; bottom: -20px"}
+
+## Cross-validation MSE
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+market['type'] = ['test' if x < 8 or x > 28 else "train" for x in market.sales]
+
+lr2 = LinearRegression().fit(market.loc[market.type == "train", ['youtube']], market.loc[market.type == "train", "sales"])
+
+y_hat = lr2.predict(market.loc[market.type == "test", ['youtube']])                   
+fig2 = px.scatter(data_frame=market,
+            x="youtube",
+            y="sales",
+            color="type",
+            color_discrete_map={
+                "train": "#e89927", 
+                "test": "#3bbc35"
+            })
+
+mse = [mean_squared_error(y_hat, market.loc[market.type == "test", "sales"])]
+fig2.add_trace(go.Scatter(x=market.loc[market.type == "test", 'youtube'],
+                          y=y_hat,
+                          name=f"<br>Model built on train data<br> Test MSE = {np.round(mse[0], 3)}",
+                          line=dict(color="#e89927")))
+fig2.update_layout(width=550, height=250, title="SLR Model: Sales vs Youtube")
+
+fig1_list = {}
+
+for i in range(4):
+    market['type'] = np.random.choice(['train', 'test'], 
+                                    replace=True, 
+                                    p=[0.8, 0.2], 
+                                    size=market.shape[0])
+    lr2 = LinearRegression().fit(market.loc[market.type == "train", ['youtube']], market.loc[market.type == "train", "sales"])
+    y_hat = lr2.predict(market.loc[market.type == "test", ['youtube']])       
+    mse.append(mean_squared_error(y_hat, market.loc[market.type == "test", "sales"]))            
+    fig1_list[i] = px.scatter(data_frame=market,
+                x="youtube",
+                y="sales",
+                color="type",
+                color_discrete_map={
+                    "train": "#e89927", 
+                    "test": "#3bbc35"
+                })
+    fig1_list[i].add_trace(go.Scatter(x=market.loc[market.type == "test", 'youtube'],
+                            y=y_hat,
+                            name=f"<br>Model built on train data<br> Test MSE = {np.round(mse[i+1], 3)}.",
+                            line=dict(color="#e89927")))
+    fig1_list[i].update_layout(width=550, height=250, title="SLR Model: Sales vs Youtube")
+
+fig2.show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{.fragment}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{.fragment}
+- Computing CV-MSE:
+
+![](./img/cv1.png)
+:::
+:::
+:::
+
+
+## Cross-validation MSE {visibility="uncounted"}
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+fig1_list[0].show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{}
+- Computing CV-MSE:
+
+![](./img/cv2.png)
+:::
+
+:::
+:::
+
+## Cross-validation MSE {visibility="uncounted"}
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+fig1_list[1].show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{}
+- Computing CV-MSE:
+
+![](./img/cv3.png)
+:::
+
+:::
+:::
+
+## Cross-validation MSE {visibility="uncounted"}
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+fig1_list[2].show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{}
+- Computing CV-MSE:
+
+![](./img/cv4.png)
+:::
+:::
+:::
+
+## Cross-validation MSE {visibility="uncounted"}
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+fig1_list[3].show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{}
+- Computing CV-MSE:
+
+![](./img/cv5.png)
+:::
+
+:::
+:::
+
+## Cross-validation MSE {visibility="uncounted"}
+
+:::{.columns}
+:::{.column width='55%'}
+- What if it's our unlucky day?
+```{python}
+fig1_list[3].show()
+```
+- Here, it's great on [training data]{.orange} but poor on [testing data]{.green}!
+
+:::{}
+- $K$-fold Cross-Validation MSE:
+$\text{CV-MSE}=\frac{1}{K}\sum_{k=1}^K\text{MSE}_k.$
+
+:::
+:::
+
+:::{.column width='45%'}
+:::{}
+- Computing CV-MSE:
+
+![](./img/cv-mse.png)
+:::
+
+:::{.fragment}
+- Doesn't depend on bad splits!
+- It's the average of different [Test MSEs]{.green}.
+- It's the `Estimate MSE` of `New Unseen Data`[$^{\text{📚}}$]{style="font-size: 0.7em"}.
+
+<div class="hline"></div>
+<div class="footnote">$^{\text{📚}}$ [Chapter 5, The Introduction to Statistical Learning](https://www.statlearning.com/).</div>
+
+:::
+:::
+:::
+
+## Cross-validation MSE
+### Summary
+- Cross-validation is a model evaluation teachnique.
+- It can be used with different metrics other than `MSE`, such as [Accuracy, F1-score](https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall){target="_blank"},...
+- It can prevent [overfitting](https://developers.google.com/machine-learning/crash-course/overfitting/overfitting#:~:text=Overfitting%20means%20creating%20a%20model,worthless%20in%20the%20real%20world.){target="_blank"}.
+- For SLR or MLR (without hyperparameter tuning), it can provide an estimate of `Test Error`.
+- For models with hyperparameters, it can be used to tune those hyperparameters (coming soon).
+- Our `sales` vs `youtube` example: **5-fold CV-MSE = `{python} np.round(np.mean(mse), 3)`** or **CV-RMSE = `{python} np.round(np.sqrt(np.mean(mse)), 3)`**.
+
+# Model Refinement {background-color="#345a8b"} 
+
+## Feature engineering 
+### Missing values & outliers
+
+:::{.columns}
+:::{.column width="58%"}
+- Data of $4$-$7$ years old kids.
+
+```{python}
+import pandas as pd
+data_kids = pd.read_csv("D:/Sothea_PC/Teaching_ITC/EDA\data/Enfants.txt", sep="\t")
+data_kids.columns = ["Gender", "Age", "Height", "Weight"]
+id_show = list(data_kids.index[(data_kids.Height == 0) & (data_kids.Weight != 0)])[:3] + list(data_kids.index[(data_kids.Height != 0) & (data_kids.Weight == 0)])[:3]
+data_kids.iloc[id_show[::2]+id_show[1::2],:].style.hide()
+```
+:::
+
+:::{.column width="42%"}
+:::{.incremental}
+- Missing values are often represented by `NA` (`nan` in ![](./img/python.png){width=30px style="position: relative; bottom: -15px"} `Python`).
+
+- **Question**: how do we handle it?
+
+- **Answer**: we should at least know what kind of missing values are they: **MCAR**, **MAR** or **MNAR**?
+:::
+:::
+:::
+
+## Feature engineering 
+### Missing values & outliers
+:::{.columns}
+#### Missing Completely At Random (MCAR)
+
+:::{.column width="50%"} 
+- They are randomly missing.
+- Easy to handle with [imputation](https://en.wikipedia.org/wiki/Imputation_(statistics)){target="_blank"} or `dropping` methods.
+- They don’t introduce bias.
+- Ex: The values are just randomly missing due to human or technical errors.
+:::
+
+:::{.column width="50%"}
+```{python}
+import plotly.graph_objects as go
+import plotly.express as px
+from plotly.subplots import make_subplots
+Id_NA = (data_kids.Weight == 0) | (data_kids.Height == 0)
+fig_kid1 = go.Figure(go.Histogram(x=data_kids.Age, name="Before dropping NA", showlegend=True))
+fig_kid1.add_trace(go.Histogram(x=data_kids.Age.loc[~Id_NA], name="After dropping NA", showlegend=True, visible="legendonly"))
+fig_kid1.update_layout(barmode='overlay', 
+                       title="Distribution of Age", 
+                       xaxis=dict(title="Age"),
+                       yaxis=dict(title="Count"),
+                       height=430)
+fig_kid1.update_traces(opacity=0.5)
+fig_kid1.show()
+```
+:::
+:::
+
+## Feature engineering
+### Missing values & outliers
+:::{.columns}
+#### Missing At Random (MAR)
+
+:::{.column width="50%"} 
+- The *missingness* is related to other **variables**.
+- Model-based [imputation](https://en.wikipedia.org/wiki/Imputation_(statistics)){target="_blank"} often work well: SLR, MLR, [KNN](https://www.ibm.com/topics/knn){target="_blank"}...
+- Ex: Weights are often missing among women in a survey if it's optional.
+:::
+
+:::{.column width="50%"}
+```{python}
+fig_kid2 = go.Figure(go.Bar(x=data_kids.Gender.unique(), y=data_kids.Gender.value_counts(), name="Before dropping NA"))
+fig_kid2.add_trace(go.Bar(x=data_kids.Gender.loc[~Id_NA].unique(), y=data_kids.Gender.loc[~Id_NA].value_counts(), name="After dropping NA", visible="legendonly"))
+fig_kid2.update_layout(barmode='overlay', 
+                       title="Distribution of Gender", 
+                       xaxis=dict(title="Gender"),
+                       yaxis=dict(title="Count"),
+                       height=430)
+fig_kid2.update_traces(opacity=0.5)
+fig_kid2.show()
+```
+:::
+
+:::
+
+## Feature engineering
+### Missing values & outliers
+#### Missing Not At Random (MNAR)
+
+- These are the trickiest, as the *missingness* is related to the missing values themselves.
+- It may require domain-specific knowledge or advanced techniques (more data, external info...).
+- Ex: Very high or very low salaries are often missing from a survey if it's optional.
+
+## Feature engineering
+### Missing values & outliers
+#### Outliers
+- Data points that deviate significantly from the majority of observations in a dataset.
+- It can influence our analyses: insightful or problematic!
+- We can hunt them down using:
+    - Graphs: Scatterplots, Boxplots or histograms...
+    - They often fall outside $[\text{Q}_1-1.5\text{IQR},\text{Q}_3+1.5\text{IQR}]$.
+
+```{python}
+fig_H = px.box(x=data_kids.Height.loc[~Id_NA])
+fig_H.update_layout(title="Boxplot of children's Heights",
+                    xaxis=dict(title="Height (cm)"),
+                    height=120)
+fig_H.show()
+```
+
+
+## Feature engineering
+### Feature transformation
+#### Z-score & Min-Max Scaling
+
+:::{.incremental}
+- [Z-score](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html){target="_blank"} of $x_j$ is $\tilde{x}_j=(x_j-\overline{x}_j)/\sigma_{x_j}$.
+- [Min-Max scaling](https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.MinMaxScaler.html){target="_blank"} of $x_j$ is $\tilde{x}_j=\frac{x_j-\min_{x_j}}{\max_{x_j}-\min_{x_j}}\in [0,1]$.
+- When inputs are of different units: (Kg, Km, dollars...).
+- When the differences in scales are too large.
+- When working with *distance-based* models or models that are *sensitive to scale of data*: SLR, MLR, KNN, SVM, Logistic Regression, PCA, Neural Networks...
+- Ex: Often used in image processing...
+:::
+
+## Feature engineering
+### Feature transformation
+#### One-hot encoding
+
+:::{.columns}
+:::{.column width="50%"}
+```{python}
+#| echo: true
+#| code-fold: true
+from gapminder import gapminder
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder as onehot
+encoder = onehot()
+encoded_data = encoder.fit_transform(gapminder.loc[gapminder.year == 2007, ['continent']]).toarray()
+
+# encoded dataset
+X_encoded = pd.DataFrame(encoded_data, columns=[x.replace('continent_', '') for x in encoder.get_feature_names_out(['continent'])])
+
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+lr = LinearRegression()
+
+lr.fit(X_encoded, gapminder.lifeExp.loc[gapminder.year==2007])
+R2 = r2_score(gapminder.lifeExp.loc[gapminder.year==2007], lr.predict(X_encoded))
+df_encoded = X_encoded.copy()
+df_encoded['lifeExp'] = gapminder.lifeExp.loc[gapminder.year==2007].values
+fig_cont = px.box(data_frame=gapminder.loc[gapminder.year==2007,:],
+                  x="continent", y="lifeExp", color="continent")
+fig_cont.update_layout(title="Life Expectancy vs Continent", height=250, width=500)
+fig_cont.show()
+```
+
+:::
+
+:::{.column width="50%"}
+- Some *categorical* inputs are useful for building models.
+- They have to be converted.
+- Ex: `continent` is useful for predicting `lifeExp` (for more, see [here](https://hassothea.github.io/EDA_ITC/Solutions/TP2_Bivariate_Analysis_sol.html){target="_blank"}).
+    - R-squared: `{python} np.round(R2,3)`.
+:::
+
+`{python} df_encoded.iloc[:1,:].round(3).style.hide()`
+:::
+
+## Feature engineering {auto-animate="true"}
+### Feature transformation
+#### Polynomial features
+
+:::{.columns}
+:::{.column width="65%"}
+- Predicting target using linear form of inputs may be unrealistic!
+- More complicated forms of inputs might be better for predicting the target!
+- Ex: `sales` vs `youtube`: $R^2\approx 61\%$.
+- Now: $\widehat{\text{sales}}=\beta_0+\beta_1\text{YT}+\beta_2\text{YT}^2$
+:::
+:::{.column width="35%"}
+```{python}
+fig1.update_layout(width=500, height=400)
+fig1.show()
+```
+:::
+:::
+
+## Feature engineering {auto-animate="true"}
+### Feature transformation
+#### Polynomial features
+
+:::{.columns}
+:::{.column width="65%"}
+- Now: $\widehat{\text{sales}}=\beta_0+\beta_1\text{YT}+\beta_2\text{YT}^2$
+
+```{python}
+#| echo: true
+#| code-fold: true
+market2 = pd.concat([market.youtube, market.youtube ** 2, market.sales], axis=1)
+market2.columns = ["YT", "YT^2", "Sales"]
+market2.iloc[:3,:]
+```
+
+:::
+:::{.column width="35%"}
+```{python}
+fig1.update_layout(width=500, height=400)
+fig1.show()
+```
+:::
+:::
+
+## Feature engineering {auto-animate="true"}
+### Feature transformation
+#### Polynomial features
+
+:::{.center}
+```{python}
+#| ecoh: true
+#| fig-align: center
+#| code-fold: true
+
+degree = [2,3,4,5,6,7,8,9,10]
+
+x_min, x_max = np.min(market2.YT), np.max(market2.YT)
+y_min, y_max = np.min(market2.Sales), np.max(market2.Sales)
+id_sort = np.argsort(market2.loc[shuffle_id == "train",['YT']].values.reshape(-1))
+
+# Create frames for polynomial fits
+frames = []
+for deg in degree:
+    if deg == 2:
+        X_feature = market2[["YT", "YT^2"]]
+    else:
+        X_feature["YT^"+str(deg)] = market2.YT ** deg
+    poly_mod = LinearRegression()
+    poly_mod.fit(X_feature.loc[shuffle_id == "train",:], market2.Sales.loc[shuffle_id == "train"])
+    x_sort = market2.loc[shuffle_id == "train",['YT']].values.reshape(-1)[id_sort]
+    y_fit = poly_mod.predict(X_feature.loc[shuffle_id == "train",:]).reshape(-1)[id_sort]
+    mse = mean_squared_error(market2.Sales.loc[shuffle_id == "test"], poly_mod.predict(X_feature.loc[shuffle_id == "test",:]))
+    frames.append(go.Frame(
+        data=[fig1.data[0],
+              fig1.data[1],
+              fig1.data[2],
+              go.Scatter(x=x_sort, y=y_fit, mode='lines', name=f'<br>Poly. deg: {deg}<br>Test MSE: {np.round(mse, 3)}')],
+        name=f'{deg}'
+))
+
+
+poly2 = LinearRegression().fit(market2.loc[shuffle_id == "train",["YT", "YT^2"]], market2.Sales.loc[shuffle_id == "train"])
+mse = mean_squared_error(market2.Sales.loc[shuffle_id == "test"], poly2.predict(market2.loc[shuffle_id == "test",["YT", "YT^2"]]))
+# Add scatter plot and first polynomial fit to the initial figure
+fig_yt = go.Figure(
+    data=[
+        fig1.data[0],
+        fig1.data[1],
+        fig1.data[2],
+        go.Scatter(x=x_sort, y=poly2.predict(X_feature.loc[shuffle_id == "train",['YT', 'YT^2']]).reshape(-1)[id_sort], 
+        mode='lines', name=f'<br>Poly. deg: 2<br>Test MSE: {np.round(mse, 3)}')
+    ],
+    layout=go.Layout(
+        title="Sales vs polynomial features of YouTube",
+        xaxis=dict(title="YouTube", range=[x_min*0.8, x_max*1.1]),
+        yaxis=dict(title="Sales", range=[y_min*0.8, y_max*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0,
+            "y": 1.25,
+            "pad": {"r": 10, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "Degree: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{deg}",
+                       "method": "animate",
+                       "args": [[f'{deg}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for deg in degree]
+        }]
+    ),
+    frames=frames
+)
+
+fig_yt.update_layout(height=500, width=1000)
+
+fig_yt.show()
+```
+:::
+
+## Feature engineering {auto-animate="true"}
+### Feature transformation
+#### Polynomial features
+
+:::{.center}
+```{python}
+#| ecoh: true
+#| fig-align: center
+#| code-fold: true
+from sklearn.preprocessing import PolynomialFeatures
+
+degree = list(range(1,10))
+
+x_min, x_max = np.min(market.facebook), np.max(market.facebook)
+y_min, y_max = np.min(market.newspaper), np.max(market.newspaper)
+id_sort1 = np.argsort(market.loc[shuffle_id == "train",'facebook'].values)
+id_sort2 = np.argsort(market.loc[shuffle_id == "train",'newspaper'].values)
+
+lin = LinearRegression()
+lin.fit(market.loc[shuffle_id == "train",['facebook', 'newspaper']], market.loc[shuffle_id == "train", 'sales'])
+
+x_surf0 = np.array([[np.min(market.loc[shuffle_id == "train",'facebook']), np.min(market.loc[shuffle_id == "train",'newspaper'])], 
+                   [np.max(market.loc[shuffle_id == "train",'facebook']), np.min(market.loc[shuffle_id == "train",'newspaper'])],
+                   [np.min(market.loc[shuffle_id == "train",'facebook']), np.max(market.loc[shuffle_id == "train",'newspaper'])],
+                   [np.max(market.loc[shuffle_id == "train",'facebook']), np.max(market.loc[shuffle_id == "train",'newspaper'])]])
+y_surf = lin.predict(x_surf0).reshape(2,2)
+x_surf = np.array([[np.min(market.loc[shuffle_id == "train",'facebook']), np.min(market.loc[shuffle_id == "train",'newspaper'])], 
+                   [np.max(market.loc[shuffle_id == "train",'facebook']), np.max(market.loc[shuffle_id == "train",'newspaper'])]])
+
+fig3D = go.Figure(go.Scatter3d(
+    x=market.loc[shuffle_id == "train",'facebook'],
+    y=market.loc[shuffle_id == "train",'newspaper'],
+    z=market.loc[shuffle_id == "train",'sales'],
+    mode = "markers",
+    marker = dict(size=5, color="#e89927"),
+    name="train"
+))
+
+fig3D.add_trace(go.Scatter3d(
+    x=market.loc[shuffle_id == "test",'facebook'],
+    y=market.loc[shuffle_id == "test",'newspaper'],
+    z=market.loc[shuffle_id == "test",'sales'],
+    mode = "markers",
+    marker = dict(size=5, color="#3bbc35"),
+    name="test"
+))
+
+mse = mean_squared_error(market2.Sales.loc[shuffle_id == "test"], lin.predict(market.loc[shuffle_id == "test",['facebook', 'newspaper']]))
+fig3D.add_trace(go.Surface(x=x_surf[:,0],
+                   y=x_surf[:,1],
+                   z=y_surf,
+                   colorbar=dict(x=0.8, xref="container"),
+                   text=f"<br>Poly. deg: 1<br>Test MSE: {np.round(mse,3)}",
+                   hovertemplate='facebook: %{x}<br>' + 
+                                 'newspaper: %{y}<br>' +
+                                 'sales: %{z}' + f'<br>Test MSE {np.round(mse, 3)}<extra></extra>'))
+
+camera = dict(eye=dict(x=1, y=-1, z=1))
+
+# Create frames for polynomial fits
+frames = []
+for deg in degree:
+    poly = PolynomialFeatures(degree=deg)
+    X_feature = poly.fit_transform(market[['facebook', 'newspaper']])
+    poly_mod = LinearRegression()
+    poly_mod.fit(X_feature[shuffle_id == "train", ], market.sales.loc[shuffle_id == "train"])
+    x_sort = market.loc[shuffle_id == "train",'facebook'].values.reshape(-1)[id_sort1].reshape(-1)
+    y_sort = market.loc[shuffle_id == "train",'newspaper'].values.reshape(-1)[id_sort2][::10].reshape(-1)
+    z_fit = np.array([[poly_mod.predict(poly.transform(pd.DataFrame({'facebook': [x_sort[i]], 'newspaper': [y_sort[j]]})))[0] for i in range(len(x_sort))] for j in range(len(y_sort))])
+    mse = mean_squared_error(market2.Sales.loc[shuffle_id == "test"], poly_mod.predict(X_feature[shuffle_id == "test",:]))
+    frames.append(go.Frame(
+        data=[fig3D.data[0],
+              fig3D.data[1],
+              go.Surface(x=x_sort,
+                         y=y_sort,
+                         z=z_fit,
+                         text=f"<br>Poly. deg: {deg}<br>Test MSE: {np.round(mse,3)}",
+                         colorbar=dict(x=0.8, xref="container"),
+                         hovertemplate='facebook: %{x}<br>' + 
+                                        'newspaper: %{y}<br>' +
+                                        'sales: %{z}' + f'<br>Test MSE {np.round(mse, 3)}<extra></extra>')],
+        name=f'{deg}'))
+# Add scatter plot and first polynomial fit to the initial figure
+fig_3D = go.Figure(
+    data=[
+        fig3D.data[0],
+        fig3D.data[1],
+        fig3D.data[2]
+    ],
+    layout=go.Layout(
+        title="Sales vs polynomial features of Facebook and Newspaper",
+        xaxis=dict(title="Facebook", range=[x_min*0.8, x_max*1.1]),
+        yaxis=dict(title="Newspaper", range=[y_min*0.8, y_max*1.1]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0,
+            "y": 1.25,
+            "pad": {"r": 10, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "Degree: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{deg}",
+                       "method": "animate",
+                       "args": [[f'{deg}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for deg in degree]
+        }]
+    ),
+    frames=frames
+)
+
+fig_3D.update_layout(height=450, width=1000, scene_camera=camera,
+                    scene=dict(
+                    zaxis=dict(title="Sales", range=[np.min(market.sales)*0.9, np.max(market.sales)*1.1])
+                    ))
+
+fig_3D.update_scenes(xaxis_title_text= "Facebook",  
+                  yaxis_title_text= "Newspaper",  
+                  zaxis_title_text="Sales"
+)
+fig_3D.show()
+```
+:::
+
+
+## Overfitting
+### Challenge in every model
+:::{.columns}
+:::{.column width="50%"}
+- **Overfitting** happens when a model learns the training data too well, capturing noise and fluctuations rather than the underlying pattern.
+- It fits the training data almost perfectly, but fails to generalize to *new, unseen data*.
+- Complex models (high-degree poly. features) often overfit the data.
+:::
+:::{.column width="50%"}
+
+```{python}
+fig_yt.update_layout(height=500, width=700)
+fig_yt.show()
+```
+:::
+:::
+
+## Overcoming overfitting
+### $K$-fold Cross-Validation
+- It ensures that the model performs well on different subsets.
+- The most common technique to overcome overfitting.
+
+:::{.callout-tip icon="true"}
+#### Tuning Polynomial `degree` Using $K$-fold Cross-Validation
+:::{.columns}
+:::{.column width="60%"}
+```{python}
+#| echo: true
+#| code-line-numbers: "1,2,3|5|7|9|10-16"
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.model_selection import cross_val_score
+# Data
+X, y = market[["youtube"]], market['sales']
+# List of all degrees to search over
+degree = list(range(1,11))
+# List to store all losses
+loss = [] 
+for deg in degree:
+    pf = PolynomialFeatures(degree=deg)
+    X_poly = pf.fit_transform(X)
+    model = LR()
+    score = -cross_val_score(model, X_poly, y, cv=5, 
+                scoring='neg_mean_squared_error').mean()
+    loss.append(score)
+```
+:::
+
+:::{.column width="40%"}
+```{python}
+fig = go.Figure(go.Scatter(x=degree, y=loss, name="Loss vs degree", mode="lines+markers", line=dict(color="red")))
+fig.update_layout(title="CV-MSE of Sales vs poly. of Youtube", width=350, height=300, xaxis=dict(title="Degree"), yaxis=dict(title="CV-MSE"))
+fig.show()
+```
+:::
+:::
+:::
+
+## overcoming overfitting
+### Regularization
+- Another approach is to `controll` the `magnitude` of the coefficients.
+- It often works well for SLR, MLR and Polynomial Regression...
+
+:::{.center}
+
+<iframe src="https://www.desmos.com/calculator/t4nrzxvvn1" width="1000" height="300" style="border: 1px solid #ccc" frameborder=0></iframe>
+
+:::
+
+## overcoming overfitting {auto-animate="true"}
+### Regularization: Ridge Regression
+- **Model**: $\hat{y}=\beta_0+\beta_1x_1+\dots+\beta_dx_d$, 
+- **Objective**: Search for $\vec{\beta}=[\beta_0,\dots,\beta_d]$ minimizing the following `loss function` for some $\color{green}{\alpha}>0$:
+$${\cal L}_{\text{ridge}}(\vec{\beta})=\color{red}{\underbrace{\sum_{i=1}^n(y_i-\widehat{y}_i)^2}_{\text{RSS}}}+\color{green}{\alpha}\color{blue}{\underbrace{\sum_{j=0}^{d}\beta_j^2}_{\text{Magnitude}}}.$$
+
+- **Recall**: SLR & MLR seek to minimize only [**RSS**]{.light-red}.
+
+## Overcoming overfitting {auto-animate="true"}
+### Regularization: Ridge Regression
+
+:::{.columns}
+:::{.column width="50%"}
+```{python}
+#| fig-align: center
+import numpy as np
+import plotly.graph_objects as go
+
+# Create a convex surface
+x = np.linspace(-1, 4, 50)
+y = np.linspace(-4, 1, 50)
+x, y = np.meshgrid(x, y)
+z = (x-1.5)**2 + (y+1.5)**2
+
+# Create the curve for x^2 + y^2 = 1
+theta = np.linspace(0, 2 * np.pi, 100)
+x_curve = np.cos(theta)
+y_curve = np.sin(theta)
+z_curve = np.zeros_like(theta)
+
+# Create the curve plot
+curve = go.Scatter3d(x=x_curve, y=y_curve, z=z_curve, mode='lines', line=dict(color='blue', width=7), name=r'$x^2 + y^2 = \alpha$')
+line1 = go.Scatter3d(x=[-4, 4], y=[0,0], z=[0,0], mode='lines', line=dict(color='gray', width=2, dash='dash'), name='y=z=0')
+line2 = go.Scatter3d(x=[0, 0], y=[-4, 4], z=[0,0], mode='lines', line=dict(color='gray', width=2, dash='dash'), name='x=z=0')
+
+surface = go.Surface(z=z, x=x, y=y, colorscale=[[0, 'red'], [1, 'red']],
+                     showscale=False, opacity=0.5,
+                     hovertemplate='beta0: %{x}<br>' + 
+                                   'beta1: %{y}<br>' + 
+                                   'Loss: %{z} <extra></extra>')
+
+# Create the figure and add the surface and curve
+fig = go.Figure(data=[surface, curve, line1, line2])
+
+alphas = np.linspace(0.25, 5, 20)
+
+frames = []
+for lmd in alphas:
+    # Create the surface plot
+    frames.append(go.Frame(
+        data=[fig.data[0],
+              fig.data[2],
+              fig.data[3],
+              go.Scatter3d(x=x_curve/lmd, y=y_curve/lmd, z=z_curve, mode='lines', line=dict(color='blue', width=7), 
+              name=r'$x^2 + y^2 = \alpha$')],
+        name=f'{np.round(lmd, 3)}'))
+
+# Add scatter plot and first polynomial fit to the initial figure
+fig = go.Figure(
+    data=[
+        fig.data[0],
+        fig.data[2],
+        fig.data[3],
+        go.Scatter3d(x=x_curve/0.25, y=y_curve/0.25, z=z_curve, mode='lines', line=dict(color='blue', width=7), 
+        name=r'$x^2 + y^2 = \alpha$')],
+    layout=go.Layout(
+        title="Loss function & regularization norm",
+        xaxis=dict(title="beta0", range=[-4, 4]),
+        yaxis=dict(title="beta1", range=[-4, 4]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0,
+            "y": 1.25,
+            "pad": {"r": 10, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "alpha: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{np.round(lmd, 3)}",
+                       "method": "animate",
+                       "args": [[f'{np.round(lmd, 3)}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for lmd in alphas]
+        }]
+    ),
+    frames=frames
+)
+
+# Update layout
+fig.update_layout(
+    width=500,
+    height=400,
+    title='Loss function & regularization norm',
+    scene=dict(
+        xaxis_title='beta0',
+        yaxis_title='beta1',
+        zaxis_title='Loss function'
+    )
+)
+
+fig.update_scenes(xaxis_title_text= "Facebook",  
+                  yaxis_title_text= "Newspaper",  
+                  zaxis_title_text="Sales"
+)
+
+fig.show()
+
+```
+:::
+
+:::{.column width="50%"}
+- Large $\color{green}{\alpha}\Rightarrow$ strong penalty $\Rightarrow$ small $\vec{\beta}$.
+- Small $\color{green}{\alpha}\Rightarrow$ weak penalty $\Rightarrow$ freer $\vec{\beta}$.
+- 🔑 **Objective**: Learn the best $\color{green}{\alpha}>0$.
+:::
+:::
+
+- Loss: ${\cal L}_{\text{ridge}}(\vec{\beta})=\color{red}{\underbrace{\sum_{i=1}^n(y_i-\widehat{y}_i)^2}_{\text{RSS}}}+\color{green}{\alpha}\color{blue}{\underbrace{\sum_{j=0}^{d}\beta_j^2}_{\text{Magnitude}}}.$
+
+## Overcoming overfitting
+### Regularization: Ridge Regression
+
+:::{.r-fit-text}
+
+How to find a suitable regularization strength $\color{green}{\alpha}$?
+
+:::
+
+## Overcoming overfitting {visibility="uncounted"}
+### Regularization: Ridge Regression
+:::{.callout-tip icon="true"}
+#### Tuning Regularization Stregnth $\color{green}{\alpha}$ Using $K$-fold Cross-Validation
+:::{.columns}
+:::{.column width="62%"}
+```{python}
+#| echo: true
+#| code-line-numbers: "1,2,3|5,6,7|9|11,12|13-20"
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import cross_val_score
+# Data
+X, y = market[["youtube"]], market['sales']
+poly = PolynomialFeatures(degree=8)
+X_poly = poly.fit_transform(X)
+# List of all degrees to search over
+alphas = list(np.linspace(0.01, 3, 30)) + list(np.linspace(3.1, 20000, 30))
+# List to store all losses
+loss = []
+coefficients = {f'alpha={alpha}': [] for alpha in alphas}
+for alp in alphas:
+    model = Ridge(alpha=alp)
+    score = -cross_val_score(model, X_poly, y, cv=5, 
+                scoring='neg_mean_squared_error').mean()
+    loss.append(score)
+    # Fit
+    model.fit(X_poly, y)
+    coefficients[f'alpha={alp}'] = model.coef_
+```
+:::
+
+:::{.column width="38%"}
+```{python}
+# Convert coefficients dictionary to DataFrame
+from plotly.subplots import make_subplots
+fig = make_subplots(rows=2, cols=1, subplot_titles=("Coefs of Poly. 8 of youtube vs Alpha", "CV-MSE vs Alpha"))
+coef_df = pd.DataFrame(coefficients, index=poly.get_feature_names_out(input_features=['youtube']))
+
+id_opt = np.argmin(loss)
+loss_opt = np.min(loss)
+alpha_opt = alphas[id_opt]
+
+# Plot coefficients
+fig.add_trace(go.Scatter(x=alphas, y=coef_df.loc[coef_df.index[0]],
+                         name=coef_df.index[0], mode="lines"), 
+              row=1, col=1)
+fig.add_trace(go.Scatter(x=[alpha_opt, alpha_opt], y=[np.min(coef_df), np.max(coef_df)],
+                         name="Optimal alpha", mode="lines", line=dict(dash="dash"), showlegend=False),
+              row=1, col=1)
+for feature in coef_df.index[1:]:
+    fig.add_trace(
+        go.Scatter(x=alphas, y=coef_df.loc[feature],
+                               name=feature, mode="lines"), row=1, col=1)
+
+fig.add_trace(go.Scatter(x=alphas, y=loss,
+                         name="CV-MSE", mode="lines"), 
+              row=2, col=1)
+fig.add_trace(go.Scatter(x=[alpha_opt, alpha_opt], y=[loss_opt, np.max(loss)],
+                         name="Optimal alpha", mode="lines", line=dict(dash="dash")),
+              row=2, col=1)
+
+fig.update_xaxes(title_text="Alpha", type='log', row=2, col=1)
+fig.update_yaxes(title_text="CV-MSE", row=2, col=1)
+
+fig.update_xaxes(title_text="Alpha", row=1, col=1)
+fig.update_yaxes(title_text="Coefficients", row=1, col=1)
+fig.update_layout(width=450, height=400)
+fig.show()
+```
+:::
+:::
+:::
+
+## Overcoming overfitting {visibility="uncounted"}
+### Regularization: Ridge Regression
+:::{.callout-tip icon="true"}
+#### Tuning Regularization Stregnth $\color{green}{\alpha}$ Using $K$-fold Cross-Validation
+:::{.columns}
+:::{.column width="62%"}
+```{python}
+fig_yt.update_layout(width=600, height=400)
+fig_yt.show()
+```
+:::
+
+:::{.column width="38%"}
+```{python}
+fig.show()
+```
+:::
+:::
+:::
+
+
+## Overcoming overfitting {visibility="uncounted"}
+### Regularization: Ridge Regression
+:::{.callout-tip icon="true"}
+#### Tuning Regularization Stregnth $\color{green}{\alpha}$ Using $K$-fold Cross-Validation
+:::{.columns}
+:::{.column width="62%"}
+```{python}
+ridge = Ridge(alpha=alpha_opt)
+ridge.fit(X_poly[shuffle_id == "train",:], y[shuffle_id == "train"])
+y_hat_poly = ridge.predict(X_poly[shuffle_id == "train",:])
+mse = mean_squared_error(ridge.predict(X_poly[shuffle_id == "test",:]), y[shuffle_id == "test"])
+
+fig_yt.add_trace(go.Scatter(x=market2.loc[shuffle_id == "train",['YT']].values.reshape(-1)[id_sort], y=y_hat_poly[id_sort], name=f"<br>Ridge Poly. 8<br>Test MSE: {np.round(mse,3)}", mode="lines", line=dict(color="red")))
+fig_yt.show()
+```
+:::
+
+:::{.column width="38%"}
+```{python}
+fig.show()
+```
+:::
+:::
+:::
+
+## Overcoming overfitting {auto-animate="true"}
+### Regularization: Ridge Regression
+:::{.columns}
+:::{.column width="50%"}
+:::{.callout-tip}
+#### Pros
+- It works well when there are inputs that are approximately linearly related with the target.
+- It helps stabilize the estimates when inputs are highly correlated.
+- It can prevent overfitting.
+- It is effective when the number of inputs exceeds the number of observations.
+:::
+:::
+
+:::{.column width="50%"}
+:::{.callout-important}
+#### Cons
+- It does not work well when the input-output relationships are highly non-linear.
+- It may introduce bias into the coefficient estimates.
+- It does not perform feature selection.
+- It can be challenging for interpretation.
+:::
+:::
+:::
+
+<!-- Lasso -->
+
+## overcoming overfitting {auto-animate="true"}
+### Regularization: Lasso Regression
+- **Model**: $\hat{y}=\beta_0+\beta_1x_1+\dots+\beta_dx_d$, 
+- **Objective**: Search for $\vec{\beta}=[\beta_0,\dots,\beta_d]$ minimizing the following `loss function` for some $\color{green}{\alpha}>0$:
+$${\cal L}_{\text{lasso}}(\vec{\beta})=\color{red}{\underbrace{\sum_{i=1}^n(y_i-\widehat{y}_i)^2}_{\text{RSS}}}+\color{green}{\alpha}\color{blue}{\underbrace{\sum_{j=0}^{d}|\beta_j|}_{\text{Magnitude}}}.$$
+
+## Overcoming overfitting {auto-animate="true"}
+### Regularization: Lasso Regression
+
+:::{.columns}
+:::{.column width="50%"}
+```{python}
+#| fig-align: center
+import numpy as np
+import plotly.graph_objects as go
+
+# Create a convex surface
+x = np.linspace(-1, 4, 50)
+y = np.linspace(-4, 1, 50)
+x, y = np.meshgrid(x, y)
+z = (x-1.5)**2 + (y+1.5)**2
+
+# Create the curve for x^2 + y^2 = 1
+x_curve = np.array([-1, 0, 1, 0, -1])
+y_curve = np.array([0, 1, 0, -1, 0])
+z_curve = np.zeros_like(x_curve)
+
+# Create the curve plot
+curve = go.Scatter3d(x=x_curve, y=y_curve, z=z_curve, mode='lines', line=dict(color='blue', width=7), name=r'$|x| + |y| = \alpha$')
+line1 = go.Scatter3d(x=[-4, 4], y=[0,0], z=[0,0], mode='lines', line=dict(color='gray', width=2, dash='dash'), name='y=z=0')
+line2 = go.Scatter3d(x=[0, 0], y=[-4, 4], z=[0,0], mode='lines', line=dict(color='gray', width=2, dash='dash'), name='x=z=0')
+
+surface = go.Surface(z=z, x=x, y=y, colorscale=[[0, 'red'], [1, 'red']],
+                     showscale=False, opacity=0.5,
+                     hovertemplate='beta0: %{x}<br>' + 
+                                   'beta1: %{y}<br>' + 
+                                   'Loss: %{z} <extra></extra>')
+
+# Create the figure and add the surface and curve
+fig = go.Figure(data=[surface, curve, line1, line2])
+
+alphas = np.linspace(0.25, 5, 20)
+
+frames = []
+for lmd in alphas:
+    # Create the surface plot
+    frames.append(go.Frame(
+        data=[fig.data[0],
+              fig.data[2],
+              fig.data[3],
+              go.Scatter3d(x=x_curve/lmd, y=y_curve/lmd, z=z_curve, mode='lines', line=dict(color='blue', width=7), 
+              name=r'$|x| + |y| = \alpha$')],
+        name=f'{np.round(lmd, 3)}'))
+
+# Add scatter plot and first polynomial fit to the initial figure
+fig = go.Figure(
+    data=[
+        fig.data[0],
+        fig.data[2],
+        fig.data[3],
+        go.Scatter3d(x=x_curve/0.25, y=y_curve/0.25, z=z_curve, mode='lines', line=dict(color='blue', width=7), 
+        name=r'$|x| + |y| = \alpha$')],
+    layout=go.Layout(
+        title="Loss function & regularization norm",
+        xaxis=dict(title="beta0", range=[-4, 4]),
+        yaxis=dict(title="beta1", range=[-4, 4]),
+        updatemenus=[{
+            "buttons": [
+                {
+                    "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}],
+                    "label": "Play",
+                    "method": "animate"
+                },
+                {
+                    "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    "label": "Stop",
+                    "method": "animate"
+                }
+            ],
+            "type": "buttons",
+            "showactive": False,
+            "x": 0,
+            "y": 1.25,
+            "pad": {"r": 10, "t": 50}
+        }],
+        sliders=[{
+            "active": 0,
+            "currentvalue": {"prefix": "alpha: "},
+            "pad": {"t": 50},
+            "steps": [{"label": f"{np.round(lmd, 3)}",
+                       "method": "animate",
+                       "args": [[f'{np.round(lmd, 3)}'], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate", 
+                       "transition": {"duration": 10}}]}
+                      for lmd in alphas]
+        }]
+    ),
+    frames=frames
+)
+
+# Update layout
+fig.update_layout(
+    width=500,
+    height=400,
+    title='Loss function & regularization norm',
+    scene=dict(
+        xaxis_title='beta0',
+        yaxis_title='beta1',
+        zaxis_title='Loss function'
+    )
+)
+
+fig.update_scenes(xaxis_title_text= "Facebook",  
+                  yaxis_title_text= "Newspaper",  
+                  zaxis_title_text="Sales"
+)
+
+fig.show()
+
+```
+:::
+
+:::{.column width="50%"}
+- Large $\color{green}{\alpha}\Rightarrow$ strong penalty $\Rightarrow$ small $\vec{\beta}$.
+- Small $\color{green}{\alpha}\Rightarrow$ weak penalty $\Rightarrow$ freer $\vec{\beta}$.
+- 🔑 **Objective**: Learn the best $\color{green}{\alpha}>0$.
+:::
+:::
+
+- Loss: ${\cal L}_{\text{lasso}}(\vec{\beta})=\color{red}{\underbrace{\sum_{i=1}^n(y_i-\widehat{y}_i)^2}_{\text{RSS}}}+\color{green}{\alpha}\color{blue}{\underbrace{\sum_{j=0}^{d}|\beta_j|}_{\text{Magnitude}}}.$
+
+## Overcoming overfitting {auto-animate="true" .scrollable}
+### Regularization: Lasso Regression
+:::{.callout-tip icon="true"}
+#### Tuning Regularization Stregnth $\color{green}{\alpha}$ Using $K$-fold Cross-Validation
+:::{.columns}
+:::{.column width="62%"}
+```{python}
+#| echo: false
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Lasso
+from sklearn.model_selection import cross_val_score
+# Data
+X, y = market[["youtube"]], market['sales']
+poly = PolynomialFeatures(degree=9)
+X_poly = poly.fit_transform(X)
+# List of all degrees to search over
+alphas = list(np.linspace(0.01, 0.5, 30)) + list(np.linspace(0.51, 30, 30))
+# List to store all losses
+loss1 = []
+coefficients = {f'alpha={alpha}': [] for alpha in alphas}
+for alp in alphas:
+    model = Lasso(alpha=alp)
+    score = -cross_val_score(model, X_poly, y, cv=5, 
+                scoring='neg_mean_squared_error').mean()
+    loss1.append(score)
+    # Fit
+    model.fit(X_poly, y)
+    coefficients[f'alpha={alp}'] = model.coef_
+
+id_opt = np.argmin(loss1)
+loss_opt = np.min(loss1)
+alpha_opt = alphas[id_opt]
+
+lasso = Lasso(alpha=alpha_opt)
+lasso.fit(X_poly[shuffle_id == "train",:], y[shuffle_id == "train"])
+y_hat_lasso = lasso.predict(X_poly[shuffle_id == "train",:])
+mse = mean_squared_error(
+    lasso.predict(X_poly[shuffle_id == "test",:]), y[shuffle_id == "test"])
+
+fig_yt.add_trace(
+    go.Scatter(x=market2.loc[shuffle_id == "train",['YT']].values.reshape(-1)[id_sort], y=y_hat_lasso[id_sort], name=f"<br>Lasso Poly. 9<br>Test MSE: {np.round(mse,3)}", mode="lines", line=dict(color="blue")))
+
+fig_yt.show()
+```
+:::
+
+:::{.column width="38%"}
+```{python}
+# Convert coefficients dictionary to DataFrame
+from plotly.subplots import make_subplots
+fig = make_subplots(rows=2, cols=1, subplot_titles=("Coefs of Poly. 9 of youtube vs Alpha", "CV-MSE vs Alpha"))
+coef_df = pd.DataFrame(coefficients, index=poly.get_feature_names_out(input_features=['youtube']))
+
+# Plot coefficients
+fig.add_trace(go.Scatter(x=alphas, y=coef_df.loc[coef_df.index[0]],
+                         name=coef_df.index[0], mode="lines"), 
+              row=1, col=1)
+fig.add_trace(go.Scatter(x=[alpha_opt, alpha_opt], y=[np.min(coef_df), np.max(coef_df)],
+                         name="Optimal alpha", mode="lines", line=dict(dash="dash", color="black"), showlegend=False),
+              row=1, col=1)
+
+for feature in coef_df.index[1:]:
+    fig.add_trace(
+        go.Scatter(x=alphas, y=coef_df.loc[feature],
+                               name=feature, mode="lines"), row=1, col=1)
+
+fig.add_trace(go.Scatter(x=alphas, y=loss1,
+                         name="CV-MSE", mode="lines"), 
+              row=2, col=1)
+fig.add_trace(go.Scatter(x=[alpha_opt, alpha_opt], y=[loss_opt, np.max(loss1)],
+                         name="Optimal alpha", mode="lines", line=dict(dash="dash", color="black")),
+              row=2, col=1)
+
+fig.update_xaxes(title_text="Alpha", type='log', row=2, col=1)
+fig.update_yaxes(title_text="CV-MSE", row=2, col=1)
+
+fig.update_xaxes(title_text="Alpha", row=1, col=1)
+fig.update_yaxes(title_text="Coefficients", row=1, col=1)
+fig.update_layout(width=450, height=400)
+fig.show()
+```
+:::
+:::
+:::
+
+
+## Overcoming overfitting {auto-animate="true"}
+### Regularization: Lasso Regression
+:::{.columns}
+:::{.column width="50%"}
+:::{.callout-tip}
+#### Pros
+- Lasso inherently performs `feature selection` when increasing regularization parameter $\alpha$ (less important variables are forced to be completely $0$).
+- It works well when there are many inputs (high-dimensional data) and some highly correlated with the target.
+- It can handle collinearities (many redundant inputs).
+- It can prevent overfitting and offers high interpretability.
+:::
+:::
+
+:::{.column width="50%"}
+:::{.callout-important}
+#### Cons
+- It does not work well when the input-output relationships are highly non-linear.
+- It may introduce bias into the coefficient estimates.
+- It is sensitive to the scale of the data, so proper scaling of predictors is crucial before applying the method.
+:::
+:::
+:::
+
+
+
+
+
+:::{.center}
+
+## 🥳 Yeahhh! Party Time.... 🥂 {background-image="./img/end_page.jpg" background-opacity="0.3"}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+### Any questions?
+
+:::
