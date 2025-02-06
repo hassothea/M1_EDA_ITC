@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.56">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>TP5 - Linear Regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="TP5_Linear_Regression_sol_files/libs/clipboard/clipboard.min.js"></script>
+<script src="TP5_Linear_Regression_sol_files/libs/quarto-html/quarto.js"></script>
+<script src="TP5_Linear_Regression_sol_files/libs/quarto-html/popper.min.js"></script>
+<script src="TP5_Linear_Regression_sol_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="TP5_Linear_Regression_sol_files/libs/quarto-html/anchor.min.js"></script>
+<link href="TP5_Linear_Regression_sol_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="TP5_Linear_Regression_sol_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="TP5_Linear_Regression_sol_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="TP5_Linear_Regression_sol_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="TP5_Linear_Regression_sol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><strong>TP5 - Linear Regression</strong></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><b>Course: EDA &amp; Unsupervised Learning</b> <br> <strong>M1-DAS</strong> <br> <strong>Lecturer: HAS Sothea, PhD</strong></p>
+<hr>
+<p><strong>Objective:</strong> In this TP, you will learn how to implement SLR, MLR and enhance your practical skills in pushing the performance of your models on new unseen data using techniques introduced in the course.</p>
+<blockquote class="blockquote">
+<p><strong>The <code>Jupyter Notebook</code> for this Lab can be downloaded here: <a href="https://hassothea.github.io/M1_EDA_ITC/TPs/TP5_Linear_Regression.ipynb">TP5_Linear_Regression.ipynb</a></strong>.</p>
+</blockquote>
+<hr>
+<section id="importing-abalone-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="importing-abalone-dataset">1. Importing <code>Abalone dataset</code></h2>
+<p>You need internet to load the data by running the following codes. For more information about this data, read <a href="https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset"><code>Abalone dataset</code></a>.</p>
+<div id="cell-3" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %pip install kagglehub   # if you have not installed "kagglehub" module yet</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> kagglehub</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> kagglehub.dataset_download(<span class="st">"rodolfomendes/abalone-dataset"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Import data</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(path <span class="op">+</span> <span class="st">"/abalone.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Warning: Looks like you're using an outdated `kagglehub` version (installed: 0.3.6), please consider upgrading to the latest version (0.3.7).</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Sex</th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>M</td>
+<td>0.455</td>
+<td>0.365</td>
+<td>0.095</td>
+<td>0.5140</td>
+<td>0.2245</td>
+<td>0.1010</td>
+<td>0.150</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>M</td>
+<td>0.350</td>
+<td>0.265</td>
+<td>0.090</td>
+<td>0.2255</td>
+<td>0.0995</td>
+<td>0.0485</td>
+<td>0.070</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>F</td>
+<td>0.530</td>
+<td>0.420</td>
+<td>0.135</td>
+<td>0.6770</td>
+<td>0.2565</td>
+<td>0.1415</td>
+<td>0.210</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>M</td>
+<td>0.440</td>
+<td>0.365</td>
+<td>0.125</td>
+<td>0.5160</td>
+<td>0.2155</td>
+<td>0.1140</td>
+<td>0.155</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>I</td>
+<td>0.330</td>
+<td>0.255</td>
+<td>0.080</td>
+<td>0.2050</td>
+<td>0.0895</td>
+<td>0.0395</td>
+<td>0.055</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>A.</strong> What’s the dimension of this dataset? How many quantitative and qualitative variables are there in this dataset?</p>
+<div id="cell-5" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'dimension of the data: </span><span class="sc">{</span>data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data.dtypes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>dimension of the data: (4177, 9)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>Sex                object
+Length            float64
+Diameter          float64
+Height            float64
+Whole weight      float64
+Shucked weight    float64
+Viscera weight    float64
+Shell weight      float64
+Rings               int64
+dtype: object</code></pre>
+</div>
+</div>
+<div id="cell-6" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Number of qualitative columns: </span><span class="sc">{</span><span class="bu">len</span>(data.select_dtypes(exclude<span class="op">=</span><span class="st">"number"</span>).columns)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Number of quantitative columns: </span><span class="sc">{</span><span class="bu">len</span>(data.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>).columns)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of qualitative columns: 1
+Number of quantitative columns: 8</code></pre>
+</div>
+</div>
+<p><strong>B.</strong> Perform univariate analysis (compute statistical values and plot the distribution) on each variables of your dataset. The goal is to understand your data (the scale and how each column is distributed), detect missing values and outliers, etc.</p>
+<ul>
+<li>Qualitative columns</li>
+</ul>
+<div id="cell-8" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).value_counts(normalize<span class="op">=</span><span class="va">True</span>) <span class="op">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Sex
+M      36.581278
+I      32.128322
+F      31.290400
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns                 <span class="co"># For plotting</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt       <span class="co"># control panel for graphic</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sns.<span class="bu">set</span>(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>_, ax  <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">3</span>))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sns.countplot(data, x<span class="op">=</span><span class="st">"Sex"</span>, ax <span class="op">=</span> ax)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.bar_label(ax.containers[<span class="dv">0</span>])</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Variable Sex"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Quantitative columns</li>
+</ul>
+<div id="cell-11" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).describe().drop(index<span class="op">=</span>[<span class="st">'count'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>0.523992</td>
+<td>0.407881</td>
+<td>0.139516</td>
+<td>0.828742</td>
+<td>0.359367</td>
+<td>0.180594</td>
+<td>0.238831</td>
+<td>9.933684</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">std</td>
+<td>0.120093</td>
+<td>0.099240</td>
+<td>0.041827</td>
+<td>0.490389</td>
+<td>0.221963</td>
+<td>0.109614</td>
+<td>0.139203</td>
+<td>3.224169</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.075000</td>
+<td>0.055000</td>
+<td>0.000000</td>
+<td>0.002000</td>
+<td>0.001000</td>
+<td>0.000500</td>
+<td>0.001500</td>
+<td>1.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>0.450000</td>
+<td>0.350000</td>
+<td>0.115000</td>
+<td>0.441500</td>
+<td>0.186000</td>
+<td>0.093500</td>
+<td>0.130000</td>
+<td>8.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>0.545000</td>
+<td>0.425000</td>
+<td>0.140000</td>
+<td>0.799500</td>
+<td>0.336000</td>
+<td>0.171000</td>
+<td>0.234000</td>
+<td>9.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>0.615000</td>
+<td>0.480000</td>
+<td>0.165000</td>
+<td>1.153000</td>
+<td>0.502000</td>
+<td>0.253000</td>
+<td>0.329000</td>
+<td>11.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">max</td>
+<td>0.815000</td>
+<td>0.650000</td>
+<td>1.130000</td>
+<td>2.825500</td>
+<td>1.488000</td>
+<td>0.760000</td>
+<td>1.005000</td>
+<td>29.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ul>
+<li>We will remove abalone with 0 heights.</li>
+</ul>
+<div id="cell-13" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data.query(<span class="st">'Height &gt; 0'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>data.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>4175.000000</td>
+<td>4175.00000</td>
+<td>4175.000000</td>
+<td>4175.000000</td>
+<td>4175.000000</td>
+<td>4175.000000</td>
+<td>4175.000000</td>
+<td>4175.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>0.524065</td>
+<td>0.40794</td>
+<td>0.139583</td>
+<td>0.829005</td>
+<td>0.359476</td>
+<td>0.180653</td>
+<td>0.238834</td>
+<td>9.935090</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>0.120069</td>
+<td>0.09922</td>
+<td>0.041725</td>
+<td>0.490349</td>
+<td>0.221954</td>
+<td>0.109605</td>
+<td>0.139212</td>
+<td>3.224227</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.075000</td>
+<td>0.05500</td>
+<td>0.010000</td>
+<td>0.002000</td>
+<td>0.001000</td>
+<td>0.000500</td>
+<td>0.001500</td>
+<td>1.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>0.450000</td>
+<td>0.35000</td>
+<td>0.115000</td>
+<td>0.442250</td>
+<td>0.186250</td>
+<td>0.093500</td>
+<td>0.130000</td>
+<td>8.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>0.545000</td>
+<td>0.42500</td>
+<td>0.140000</td>
+<td>0.800000</td>
+<td>0.336000</td>
+<td>0.171000</td>
+<td>0.234000</td>
+<td>9.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>0.615000</td>
+<td>0.48000</td>
+<td>0.165000</td>
+<td>1.153500</td>
+<td>0.502000</td>
+<td>0.253000</td>
+<td>0.328750</td>
+<td>11.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>0.815000</td>
+<td>0.65000</td>
+<td>1.130000</td>
+<td>2.825500</td>
+<td>1.488000</td>
+<td>0.760000</td>
+<td>1.005000</td>
+<td>29.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-14" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, va <span class="kw">in</span> <span class="bu">enumerate</span>(data.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>).columns):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    sns.histplot(data, x<span class="op">=</span>va, ax<span class="op">=</span>axs[i<span class="op">//</span><span class="dv">4</span>, i<span class="op">%</span><span class="dv">4</span>], kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    axs[i<span class="op">//</span><span class="dv">4</span>, i<span class="op">%</span><span class="dv">4</span>].set_title(va)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Note:</strong> Most abalones are around 0.001 to 0.25 in height except for a few abalones that are much taller in height than others. THose can be considered outliers.</p>
+</blockquote>
+</section>
+<section id="correlation-matrix-slr-and-mlr" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-matrix-slr-and-mlr">2. Correlation matrix, SLR and MLR</h2>
+<p><strong>A.</strong> Compute the correlation matrix of this data using <code>pd.corr()</code> function. Describe what you observed from this correlation matrix.</p>
+<div id="cell-17" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).corr()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Length</td>
+<td>1.000000</td>
+<td>0.986802</td>
+<td>0.828108</td>
+<td>0.925217</td>
+<td>0.897859</td>
+<td>0.902960</td>
+<td>0.898419</td>
+<td>0.556464</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Diameter</td>
+<td>0.986802</td>
+<td>1.000000</td>
+<td>0.834298</td>
+<td>0.925414</td>
+<td>0.893108</td>
+<td>0.899672</td>
+<td>0.906084</td>
+<td>0.574418</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Height</td>
+<td>0.828108</td>
+<td>0.834298</td>
+<td>1.000000</td>
+<td>0.819886</td>
+<td>0.775621</td>
+<td>0.798908</td>
+<td>0.819596</td>
+<td>0.557625</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Whole weight</td>
+<td>0.925217</td>
+<td>0.925414</td>
+<td>0.819886</td>
+<td>1.000000</td>
+<td>0.969389</td>
+<td>0.966354</td>
+<td>0.955924</td>
+<td>0.540151</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shucked weight</td>
+<td>0.897859</td>
+<td>0.893108</td>
+<td>0.775621</td>
+<td>0.969389</td>
+<td>1.000000</td>
+<td>0.931924</td>
+<td>0.883129</td>
+<td>0.420597</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Viscera weight</td>
+<td>0.902960</td>
+<td>0.899672</td>
+<td>0.798908</td>
+<td>0.966354</td>
+<td>0.931924</td>
+<td>1.000000</td>
+<td>0.908186</td>
+<td>0.503562</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shell weight</td>
+<td>0.898419</td>
+<td>0.906084</td>
+<td>0.819596</td>
+<td>0.955924</td>
+<td>0.883129</td>
+<td>0.908186</td>
+<td>1.000000</td>
+<td>0.627928</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Rings</td>
+<td>0.556464</td>
+<td>0.574418</td>
+<td>0.557625</td>
+<td>0.540151</td>
+<td>0.420597</td>
+<td>0.503562</td>
+<td>0.627928</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).corr(method<span class="op">=</span><span class="st">"spearman"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Length</td>
+<td>1.000000</td>
+<td>0.983299</td>
+<td>0.888124</td>
+<td>0.972600</td>
+<td>0.956790</td>
+<td>0.952600</td>
+<td>0.948662</td>
+<td>0.603954</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Diameter</td>
+<td>0.983299</td>
+<td>1.000000</td>
+<td>0.895651</td>
+<td>0.971290</td>
+<td>0.950422</td>
+<td>0.948328</td>
+<td>0.954896</td>
+<td>0.622487</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Height</td>
+<td>0.888124</td>
+<td>0.895651</td>
+<td>1.000000</td>
+<td>0.915963</td>
+<td>0.874163</td>
+<td>0.900535</td>
+<td>0.922130</td>
+<td>0.657403</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Whole weight</td>
+<td>0.972600</td>
+<td>0.971290</td>
+<td>0.915963</td>
+<td>1.000000</td>
+<td>0.977038</td>
+<td>0.975222</td>
+<td>0.970197</td>
+<td>0.630440</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shucked weight</td>
+<td>0.956790</td>
+<td>0.950422</td>
+<td>0.874163</td>
+<td>0.977038</td>
+<td>1.000000</td>
+<td>0.947581</td>
+<td>0.918465</td>
+<td>0.538956</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Viscera weight</td>
+<td>0.952600</td>
+<td>0.948328</td>
+<td>0.900535</td>
+<td>0.975222</td>
+<td>0.947581</td>
+<td>1.000000</td>
+<td>0.938893</td>
+<td>0.613930</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shell weight</td>
+<td>0.948662</td>
+<td>0.954896</td>
+<td>0.922130</td>
+<td>0.970197</td>
+<td>0.918465</td>
+<td>0.938893</td>
+<td>1.000000</td>
+<td>0.692991</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Rings</td>
+<td>0.603954</td>
+<td>0.622487</td>
+<td>0.657403</td>
+<td>0.630440</td>
+<td>0.538956</td>
+<td>0.613930</td>
+<td>0.692991</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>B.</strong> Draw the pairs of scatterplots of the target <code>Rings</code> vs the all quantitative inputs.</p>
+<ul>
+<li>Comment your findings and handle the problems if there is any in the graph.</li>
+</ul>
+<div id="cell-20" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sns.pairplot(data<span class="op">=</span>data, hue<span class="op">=</span><span class="st">'Sex'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There seems to be outliers in Height, therefore we should remove them.</p>
+<div id="cell-22" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data.query(<span class="st">"Height &lt; 0.5"</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sns.pairplot(data, hue<span class="op">=</span><span class="st">"Sex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>).corr()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Length</th>
+<th data-quarto-table-cell-role="th">Diameter</th>
+<th data-quarto-table-cell-role="th">Height</th>
+<th data-quarto-table-cell-role="th">Whole weight</th>
+<th data-quarto-table-cell-role="th">Shucked weight</th>
+<th data-quarto-table-cell-role="th">Viscera weight</th>
+<th data-quarto-table-cell-role="th">Shell weight</th>
+<th data-quarto-table-cell-role="th">Rings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Length</td>
+<td>1.000000</td>
+<td>0.986794</td>
+<td>0.900868</td>
+<td>0.925328</td>
+<td>0.898129</td>
+<td>0.903033</td>
+<td>0.898363</td>
+<td>0.556572</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Diameter</td>
+<td>0.986794</td>
+<td>1.000000</td>
+<td>0.907187</td>
+<td>0.925499</td>
+<td>0.893330</td>
+<td>0.899716</td>
+<td>0.906026</td>
+<td>0.574551</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Height</td>
+<td>0.900868</td>
+<td>0.907187</td>
+<td>1.000000</td>
+<td>0.888850</td>
+<td>0.837485</td>
+<td>0.866757</td>
+<td>0.891857</td>
+<td>0.610107</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Whole weight</td>
+<td>0.925328</td>
+<td>0.925499</td>
+<td>0.888850</td>
+<td>1.000000</td>
+<td>0.969370</td>
+<td>0.966290</td>
+<td>0.955954</td>
+<td>0.540621</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shucked weight</td>
+<td>0.898129</td>
+<td>0.893330</td>
+<td>0.837485</td>
+<td>0.969370</td>
+<td>1.000000</td>
+<td>0.931831</td>
+<td>0.883194</td>
+<td>0.421156</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Viscera weight</td>
+<td>0.903033</td>
+<td>0.899716</td>
+<td>0.866757</td>
+<td>0.966290</td>
+<td>0.931831</td>
+<td>1.000000</td>
+<td>0.908133</td>
+<td>0.503977</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Shell weight</td>
+<td>0.898363</td>
+<td>0.906026</td>
+<td>0.891857</td>
+<td>0.955954</td>
+<td>0.883194</td>
+<td>0.908133</td>
+<td>1.000000</td>
+<td>0.628169</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Rings</td>
+<td>0.556572</td>
+<td>0.574551</td>
+<td>0.610107</td>
+<td>0.540621</td>
+<td>0.421156</td>
+<td>0.503977</td>
+<td>0.628169</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ul>
+<li>Here, I split the data into two parts. You are allowed to use only the training part for building models. The testing part will be used to evaluate the models’ performance.</li>
+</ul>
+<div id="cell-25" class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                                        data.iloc[:,:<span class="dv">8</span>], </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                                        data[<span class="st">'Rings'</span>], </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                                        test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> pd.concat([pd.get_dummies(X_train[[<span class="st">'Sex'</span>]], drop_first<span class="op">=</span><span class="va">True</span>), X_train.iloc[:,<span class="dv">1</span>:]], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> pd.concat([pd.get_dummies(X_test[[<span class="st">'Sex'</span>]], drop_first<span class="op">=</span><span class="va">True</span>), X_test.iloc[:,<span class="dv">1</span>:]], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>C.</strong> Fit a SLR model using the most correlated input to predict the <code>Rings</code> of abalone.</p>
+<ul>
+<li>Draw the fitted line on the previous scatterplot.</li>
+<li>Compute <span class="math inline">\(R^2\)</span> and explain the observed value.</li>
+<li>Compute Mean Suared Error on the test data (Test MSE).</li>
+<li>Analyze the residuals and conclude.</li>
+</ul>
+<div id="cell-27" class="cell" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression <span class="im">as</span> LR</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>slr <span class="op">=</span> LR()</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>slr <span class="op">=</span> slr.fit(X_train[[<span class="st">'Shell weight'</span>]], y_train)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> slr.predict(X_test[[<span class="st">'Shell weight'</span>]])</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.scatterplot(data, x<span class="op">=</span><span class="st">"Shell weight"</span>, y <span class="op">=</span> <span class="st">"Rings"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>plt.plot(X_test[<span class="st">'Shell weight'</span>], y_pred, c<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Fitted line"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-28" class="cell" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, r2_score</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df_mse <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'SLR'</span>: [</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        mean_squared_error(y_test, y_pred), </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        r2_score(y_test, y_pred), </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'NA'</span>]},</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>     index<span class="op">=</span>[<span class="st">'Test MSE'</span>, <span class="st">'R-square'</span>, <span class="st">'Adj-R-Squared'</span>])</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>df_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="54">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">SLR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Test MSE</td>
+<td>6.960663</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">R-square</td>
+<td>0.419115</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Adj-R-Squared</td>
+<td>NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-29" class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>y_pred_tr <span class="op">=</span> slr.predict(X_train[[<span class="st">'Shell weight'</span>]])</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>res0 <span class="op">=</span> y_train <span class="op">-</span> y_pred_tr</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>df_slr <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fitted'</span>: y_pred_tr,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Residual'</span>: res0,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Actual'</span>: y_train</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>_, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(df_slr, x<span class="op">=</span><span class="st">"Actual"</span>, y<span class="op">=</span><span class="st">"Fitted"</span>, ax<span class="op">=</span>axs[<span class="dv">0</span>])</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(df_slr[<span class="st">'Actual'</span>], df_slr[<span class="st">'Actual'</span>], <span class="st">'r'</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">"Actual vs Prediction"</span>)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(df_slr, x<span class="op">=</span><span class="st">"Fitted"</span>, y<span class="op">=</span><span class="st">"Residual"</span>, ax<span class="op">=</span>axs[<span class="dv">1</span>])</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">"Residual vs Prediction"</span>)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(df_slr[<span class="st">'Actual'</span>], [<span class="dv">0</span>]<span class="op">*</span><span class="bu">len</span>(df_slr[<span class="st">'Actual'</span>]), <span class="st">'r'</span>)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>sns.histplot(df_slr, x<span class="op">=</span><span class="st">"Residual"</span>, ax<span class="op">=</span>axs[<span class="dv">2</span>], kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_title(<span class="st">"Residual distribution"</span>)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>D.</strong> Fit MLR using all inputs. Compute:</p>
+<ul>
+<li>Compute <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R_{\text{adj}}^2\)</span> and explain the observed value.</li>
+<li>Compute Mean Suared Error on the test data (Test MSE).</li>
+<li>Analyze the residuals and conclude.</li>
+</ul>
+<div id="cell-31" class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mlr <span class="op">=</span> LR().fit(X_train, y_train)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>y_pred_mlr <span class="op">=</span> mlr.predict(X_test)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adjusted_r2(y1, y2, d):</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span><span class="op">-</span>(<span class="bu">len</span>(y1)<span class="op">-</span><span class="dv">1</span>)<span class="op">/</span>(<span class="bu">len</span>(y1)<span class="op">-</span>d<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>r2_score(y1,y2))</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'R-squared: </span><span class="sc">{</span>r2_score(y_test, y_pred_mlr)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'R-squared: </span><span class="sc">{</span>adjusted_r2(y_test, y_pred_mlr, X_test.shape[<span class="dv">1</span>])<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Test MSE: </span><span class="sc">{</span>mean_squared_error(y_test, y_pred_mlr)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>df_mse <span class="op">=</span> pd.concat([df_mse, pd.DataFrame(</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'MLR'</span>: [</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        mean_squared_error(y_test, y_pred_mlr), </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>        r2_score(y_test, y_pred_mlr), </span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>        adjusted_r2(y_test, y_pred_mlr, X_test.shape[<span class="dv">1</span>])]},</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>     index<span class="op">=</span>[<span class="st">'Test MSE'</span>, <span class="st">'R-square'</span>, <span class="st">'Adj-R-Squared'</span>])], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>df_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R-squared: 0.5852978270364873
+R-squared: 0.5807738033314307
+Test MSE: 4.969320719101582</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="56">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">SLR</th>
+<th data-quarto-table-cell-role="th">MLR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Test MSE</td>
+<td>6.960663</td>
+<td>4.969321</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">R-square</td>
+<td>0.419115</td>
+<td>0.585298</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Adj-R-Squared</td>
+<td>NA</td>
+<td>0.580774</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-32" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>y_pred_tr <span class="op">=</span> mlr.predict(X_train)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>res1 <span class="op">=</span> y_train <span class="op">-</span> y_pred_tr</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>df_mlr <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fitted'</span>: y_pred_tr,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Residual'</span>: res1,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Actual'</span>: y_train</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>_, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(df_mlr, x<span class="op">=</span><span class="st">"Actual"</span>, y<span class="op">=</span><span class="st">"Fitted"</span>, ax<span class="op">=</span>axs[<span class="dv">0</span>])</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(df_mlr[<span class="st">'Actual'</span>], df_mlr[<span class="st">'Actual'</span>], <span class="st">'r'</span>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">"Actual vs Prediction"</span>)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(df_mlr, x<span class="op">=</span><span class="st">"Fitted"</span>, y<span class="op">=</span><span class="st">"Residual"</span>, ax<span class="op">=</span>axs[<span class="dv">1</span>])</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">"Residual vs Prediction"</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(df_mlr[<span class="st">'Actual'</span>], [<span class="dv">0</span>]<span class="op">*</span><span class="bu">len</span>(df_mlr[<span class="st">'Actual'</span>]), <span class="st">'r'</span>)</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>sns.histplot(df_mlr, x<span class="op">=</span><span class="st">"Residual"</span>, ax<span class="op">=</span>axs[<span class="dv">2</span>], kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_title(<span class="st">"Residual distribution"</span>)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="polynomial-regression-and-regularized-linear-models" class="level2">
+<h2 class="anchored" data-anchor-id="polynomial-regression-and-regularized-linear-models">3. Polynomial Regression and Regularized Linear Models</h2>
+<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case.</p>
+<ul>
+<li>Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting">slide 47</a>.</li>
+</ul>
+<div id="cell-34" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PolynomialFeatures</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>degrees <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> []</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>preds_test <span class="op">=</span> []</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>poly_dim <span class="op">=</span> []</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> []</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> deg <span class="kw">in</span> degrees:</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    poly <span class="op">=</span> PolynomialFeatures(degree<span class="op">=</span>deg)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    X_poly <span class="op">=</span> poly.fit_transform(X_train[[<span class="st">'Shell weight'</span>]])</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    poly_dim.append(X_poly.shape[<span class="dv">1</span>])</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LR().fit(X_poly, y_train)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    preds.append(model.predict(X_poly))</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    X_poly_test <span class="op">=</span> poly.transform(X_test[[<span class="st">'Shell weight'</span>]])</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    y_test_pred <span class="op">=</span> model.predict(X_poly_test)</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    preds_test.append(y_test_pred)</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    mse.append(mean_squared_error(y_test, y_test_pred))</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>df_poly <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Degree'</span> : degrees,</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Test MSE'</span>: mse</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lineplot(df_poly, x<span class="op">=</span><span class="st">"Degree"</span>, y<span class="op">=</span><span class="st">"Test MSE"</span>)</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Test MSE vs Degree"</span>)</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.scatterplot(x<span class="op">=</span>X_train[<span class="st">'Shell weight'</span>], y<span class="op">=</span>y_train)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Fitted polynomial regression'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> sns.color_palette()</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>id_sort <span class="op">=</span> X_train[<span class="st">'Shell weight'</span>].argsort()</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, pred <span class="kw">in</span> <span class="bu">enumerate</span>(preds):</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    ax.plot(X_train[<span class="st">'Shell weight'</span>].iloc[id_sort], pred[id_sort], c<span class="op">=</span>cols[i], label<span class="op">=</span><span class="ss">f"Poly </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">2</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    df_mse <span class="op">=</span> pd.concat(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        [df_mse, pd.DataFrame(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>            {<span class="st">'Poly'</span> <span class="op">+</span> <span class="bu">str</span>(i<span class="op">+</span><span class="dv">2</span>): [mean_squared_error(y_test, preds_test[i]), </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                     r2_score(y_test, preds_test[i]), </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                     adjusted_r2(y_test, preds_test[i], poly_dim[i])]},</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>     index<span class="op">=</span>[<span class="st">'Test MSE'</span>, <span class="st">'R-square'</span>, <span class="st">'Adj-R-Squared'</span>])], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-36" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="60">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">SLR</th>
+<th data-quarto-table-cell-role="th">MLR</th>
+<th data-quarto-table-cell-role="th">Poly2</th>
+<th data-quarto-table-cell-role="th">Poly3</th>
+<th data-quarto-table-cell-role="th">Poly4</th>
+<th data-quarto-table-cell-role="th">Poly5</th>
+<th data-quarto-table-cell-role="th">Poly6</th>
+<th data-quarto-table-cell-role="th">Poly7</th>
+<th data-quarto-table-cell-role="th">Poly8</th>
+<th data-quarto-table-cell-role="th">Poly9</th>
+<th data-quarto-table-cell-role="th">Poly10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Test MSE</td>
+<td>6.960663</td>
+<td>4.969321</td>
+<td>6.753474</td>
+<td>6.595747</td>
+<td>6.558894</td>
+<td>6.581101</td>
+<td>6.599169</td>
+<td>6.599699</td>
+<td>6.579606</td>
+<td>6.573815</td>
+<td>6.595559</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">R-square</td>
+<td>0.419115</td>
+<td>0.585298</td>
+<td>0.436406</td>
+<td>0.449569</td>
+<td>0.452644</td>
+<td>0.450791</td>
+<td>0.449283</td>
+<td>0.449239</td>
+<td>0.450915</td>
+<td>0.451399</td>
+<td>0.449584</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Adj-R-Squared</td>
+<td>NA</td>
+<td>0.580774</td>
+<td>0.434371</td>
+<td>0.446916</td>
+<td>0.449343</td>
+<td>0.446811</td>
+<td>0.444621</td>
+<td>0.443904</td>
+<td>0.444925</td>
+<td>0.444741</td>
+<td>0.442228</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ul>
+<li>Cross-validation</li>
+</ul>
+<div id="cell-38" class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># List to store all losses</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> [] </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> deg <span class="kw">in</span> degrees:</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    pf <span class="op">=</span> PolynomialFeatures(degree<span class="op">=</span>deg)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    X_poly <span class="op">=</span> pf.fit_transform(X_train[[<span class="st">'Shell weight'</span>]])</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LR()</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> <span class="op">-</span>cross_val_score(model, X_poly, y_train, cv<span class="op">=</span><span class="dv">10</span>, </span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                scoring<span class="op">=</span><span class="st">'neg_mean_squared_error'</span>).mean()</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    loss.append(score)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>df_loss_cv <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'CV-MSE'</span>: loss,</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Degree'</span>: degrees</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">'Poly'</span> <span class="op">+</span><span class="bu">str</span>(i) <span class="cf">for</span> i <span class="kw">in</span> degrees]</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>best_deg <span class="op">=</span> degrees[np.argmin(loss)]</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lineplot(df_loss_cv, x<span class="op">=</span><span class="st">"Degree"</span>, y<span class="op">=</span><span class="st">"CV-MSE"</span>, markers<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>ax.vlines(x<span class="op">=</span>[best_deg], ymin<span class="op">=</span>np.<span class="bu">min</span>(loss), ymax<span class="op">=</span>np.<span class="bu">max</span>(loss), color<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>ax.set_yscale(<span class="st">"log"</span>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"CV-MSE vs Degree"</span>)</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>.</p>
+<ul>
+<li>Compute Test MSE and compare it to the previous models.</li>
+</ul>
+<div id="cell-40" class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># List of all degrees to search over</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>alphas <span class="op">=</span> <span class="bu">list</span>(np.linspace(<span class="fl">0.00001</span>, <span class="dv">3</span>, <span class="dv">50</span>)) <span class="op">+</span> <span class="bu">list</span>(np.linspace(<span class="fl">3.1</span>, <span class="dv">100</span>, <span class="dv">50</span>))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List to store all losses</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> []</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>test_mse <span class="op">=</span> []</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>test_r2 <span class="op">=</span> []</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>test_r2_squared <span class="op">=</span> []</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> {<span class="ss">f'alpha=</span><span class="sc">{</span>alpha<span class="sc">}</span><span class="ss">'</span>: [] <span class="cf">for</span> alpha <span class="kw">in</span> alphas}</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> alp <span class="kw">in</span> alphas:</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Ridge(alpha<span class="op">=</span>alp)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    mse <span class="op">=</span> <span class="op">-</span>cross_val_score(model, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>, </span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                scoring<span class="op">=</span><span class="st">'neg_mean_squared_error'</span>).mean()</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    loss.append(mse)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    model.fit(X_train, y_train)</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    coefficients[<span class="ss">f'alpha=</span><span class="sc">{</span>alp<span class="sc">}</span><span class="ss">'</span>] <span class="op">=</span> model.coef_</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    y_hat_ridge <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>    test_mse.append(mean_squared_error(y_test, y_hat_ridge))</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    test_r2.append(r2_score(y_test, y_hat_ridge))</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    test_r2_squared.append(adjusted_r2(y_test, y_hat_ridge, X_train.shape[<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-41" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">4</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>pd_coef <span class="op">=</span> pd.DataFrame(coefficients, index<span class="op">=</span>X_train.columns)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Test error</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].plot(alphas, test_mse, label<span class="op">=</span><span class="st">"Test MSE"</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">"Test MSE at each penalty strength alpha"</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend()</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Test MSE"</span>)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>id_min <span class="op">=</span> np.argmin(loss)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Optimal regularization strength alpha for Ridge regression: </span><span class="sc">{</span>alphas[id_min]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(alphas, loss, label<span class="op">=</span><span class="st">"CV MSE"</span>)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].vlines(x<span class="op">=</span>alphas[id_min], ymin<span class="op">=</span>np.<span class="bu">min</span>(loss), ymax<span class="op">=</span>np.<span class="bu">max</span>(loss), label<span class="op">=</span><span class="st">"optimal alpha"</span>, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">"CV MSE at each penalty strength alpha"</span>)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend()</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">"CV MSE"</span>)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].plot(alphas, pd_coef.transpose(), label<span class="op">=</span>pd_coef.index)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].vlines(x<span class="op">=</span>alphas[id_min], ymin<span class="op">=</span>np.<span class="bu">min</span>(pd_coef), ymax<span class="op">=</span>np.<span class="bu">max</span>(pd_coef), label<span class="op">=</span><span class="st">"optimal alpha"</span>, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>)</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_title(<span class="st">"Coefs at each penalty strength alpha"</span>)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].legend()</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_ylabel(<span class="st">"Coef"</span>)</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimal regularization strength alpha for Ridge regression: 0.06123428571428571</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-26-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>The first graph is the performance of Ridge regression at each value of on the testing data. On the other hand, the second graph illustrates the performance of Ridge regression on cross-validation subsets. The last graph shows the values of the coefficients of the model at each value of penalty parameter <span class="math inline">\(\alpha\)</span>.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>We can see that optimal strength <span class="math inline">\(\alpha\approx 0.0612\)</span> by cross-validation method. The average CV MSE at this level of penalty strength is given below.</p>
+</blockquote>
+<div id="cell-43" class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df_mse[<span class="st">'Ridge'</span>] <span class="op">=</span> [test_mse[id_min], test_r2[id_min], test_r2_squared[id_min]]</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="64">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">SLR</th>
+<th data-quarto-table-cell-role="th">MLR</th>
+<th data-quarto-table-cell-role="th">Poly2</th>
+<th data-quarto-table-cell-role="th">Poly3</th>
+<th data-quarto-table-cell-role="th">Poly4</th>
+<th data-quarto-table-cell-role="th">Poly5</th>
+<th data-quarto-table-cell-role="th">Poly6</th>
+<th data-quarto-table-cell-role="th">Poly7</th>
+<th data-quarto-table-cell-role="th">Poly8</th>
+<th data-quarto-table-cell-role="th">Poly9</th>
+<th data-quarto-table-cell-role="th">Poly10</th>
+<th data-quarto-table-cell-role="th">Ridge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Test MSE</td>
+<td>6.960663</td>
+<td>4.969321</td>
+<td>6.753474</td>
+<td>6.595747</td>
+<td>6.558894</td>
+<td>6.581101</td>
+<td>6.599169</td>
+<td>6.599699</td>
+<td>6.579606</td>
+<td>6.573815</td>
+<td>6.595559</td>
+<td>4.962656</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">R-square</td>
+<td>0.419115</td>
+<td>0.585298</td>
+<td>0.436406</td>
+<td>0.449569</td>
+<td>0.452644</td>
+<td>0.450791</td>
+<td>0.449283</td>
+<td>0.449239</td>
+<td>0.450915</td>
+<td>0.451399</td>
+<td>0.449584</td>
+<td>0.585854</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Adj-R-Squared</td>
+<td>NA</td>
+<td>0.580774</td>
+<td>0.434371</td>
+<td>0.446916</td>
+<td>0.449343</td>
+<td>0.446811</td>
+<td>0.444621</td>
+<td>0.443904</td>
+<td>0.444925</td>
+<td>0.444741</td>
+<td>0.442228</td>
+<td>0.581336</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/M1_EDA_ITC/Slides/Linear_regression.html#/overcoming-overfitting-5">slide 51</a>.</p>
+<ul>
+<li>Compute Test MSE and compare it to the previous models.</li>
+<li>How many inputs are retained by Lasso?</li>
+</ul>
+<div id="cell-45" class="cell" data-execution_count="65">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Lasso</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># List of all degrees to search over</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>alphas <span class="op">=</span> <span class="bu">list</span>(np.linspace(<span class="fl">0.001</span>, <span class="dv">3</span>, <span class="dv">100</span>))</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List to store all losses</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> []</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>test_mse <span class="op">=</span> []</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>test_r2 <span class="op">=</span> []</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>test_r2_squared <span class="op">=</span> []</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> {<span class="ss">f'alpha=</span><span class="sc">{</span>alpha<span class="sc">}</span><span class="ss">'</span>: [] <span class="cf">for</span> alpha <span class="kw">in</span> alphas}</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> alp <span class="kw">in</span> alphas:</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Lasso(alpha<span class="op">=</span>alp)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>    mse <span class="op">=</span> <span class="op">-</span>cross_val_score(model, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>, </span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>                scoring<span class="op">=</span><span class="st">'neg_mean_squared_error'</span>).mean()</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    loss.append(mse)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    model.fit(X_train, y_train)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    coefficients[<span class="ss">f'alpha=</span><span class="sc">{</span>alp<span class="sc">}</span><span class="ss">'</span>] <span class="op">=</span> model.coef_</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    y_hat_lasso <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    test_mse.append(mean_squared_error(y_test, y_hat_lasso))</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>    test_r2.append(r2_score(y_test, y_hat_lasso))</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>    test_r2_squared.append(adjusted_r2(y_test, y_hat_lasso, X_train.shape[<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-46" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">4</span>))</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>pd_coef <span class="op">=</span> pd.DataFrame(coefficients, index<span class="op">=</span>X_train.columns)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Test error</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].plot(alphas, test_mse, label<span class="op">=</span><span class="st">"Test MSE"</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">"Test MSE at each penalty strength alpha"</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend()</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Test MSE"</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>id_min <span class="op">=</span> np.argmin(loss)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Optimal regularization strength alpha for LASSO regression: </span><span class="sc">{</span>alphas[id_min]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(alphas, loss, label<span class="op">=</span><span class="st">"CV MSE"</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].vlines(x<span class="op">=</span>alphas[id_min], ymin<span class="op">=</span>np.<span class="bu">min</span>(loss), ymax<span class="op">=</span>np.<span class="bu">max</span>(loss), label<span class="op">=</span><span class="st">"optimal alpha"</span>, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">"CV MSE at each penalty strength alpha"</span>)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend()</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">"CV MSE"</span>)</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].plot(alphas, pd_coef.transpose(), label<span class="op">=</span>pd_coef.index)</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].vlines(x<span class="op">=</span>alphas[id_min], ymin<span class="op">=</span>np.<span class="bu">min</span>(pd_coef), ymax<span class="op">=</span>np.<span class="bu">max</span>(pd_coef), label<span class="op">=</span><span class="st">"optimal alpha"</span>, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>)</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_title(<span class="st">"Coefs at each penalty strength alpha"</span>)</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_xlabel(<span class="st">"alpha"</span>)</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_ylabel(<span class="st">"Coef"</span>)</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimal regularization strength alpha for LASSO regression: 0.001</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP5_Linear_Regression_sol_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-47" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>df_mse[<span class="st">'LASSO'</span>] <span class="op">=</span> [test_mse[id_min], test_r2[id_min], test_r2_squared[id_min]]</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>df_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="67">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">SLR</th>
+<th data-quarto-table-cell-role="th">MLR</th>
+<th data-quarto-table-cell-role="th">Poly2</th>
+<th data-quarto-table-cell-role="th">Poly3</th>
+<th data-quarto-table-cell-role="th">Poly4</th>
+<th data-quarto-table-cell-role="th">Poly5</th>
+<th data-quarto-table-cell-role="th">Poly6</th>
+<th data-quarto-table-cell-role="th">Poly7</th>
+<th data-quarto-table-cell-role="th">Poly8</th>
+<th data-quarto-table-cell-role="th">Poly9</th>
+<th data-quarto-table-cell-role="th">Poly10</th>
+<th data-quarto-table-cell-role="th">Ridge</th>
+<th data-quarto-table-cell-role="th">LASSO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Test MSE</td>
+<td>6.960663</td>
+<td>4.969321</td>
+<td>6.753474</td>
+<td>6.595747</td>
+<td>6.558894</td>
+<td>6.581101</td>
+<td>6.599169</td>
+<td>6.599699</td>
+<td>6.579606</td>
+<td>6.573815</td>
+<td>6.595559</td>
+<td>4.962656</td>
+<td>4.955233</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">R-square</td>
+<td>0.419115</td>
+<td>0.585298</td>
+<td>0.436406</td>
+<td>0.449569</td>
+<td>0.452644</td>
+<td>0.450791</td>
+<td>0.449283</td>
+<td>0.449239</td>
+<td>0.450915</td>
+<td>0.451399</td>
+<td>0.449584</td>
+<td>0.585854</td>
+<td>0.586473</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Adj-R-Squared</td>
+<td>NA</td>
+<td>0.580774</td>
+<td>0.434371</td>
+<td>0.446916</td>
+<td>0.449343</td>
+<td>0.446811</td>
+<td>0.444621</td>
+<td>0.443904</td>
+<td>0.444925</td>
+<td>0.444741</td>
+<td>0.442228</td>
+<td>0.581336</td>
+<td>0.581962</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="auto-mpg-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="auto-mpg-dataset">4. Auto-MPG Dataset</h2>
+<p>Apply what you have learn to predict fuel efficiency (Miles Per Gallon, MPG) in vehicles of the kaggle <a href="https://www.kaggle.com/datasets/uciml/autompg-dataset">AUTO-MPG Dataset</a>.</p>
+<div id="cell-49" class="cell" data-execution_count="103">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> kagglehub</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> kagglehub.dataset_download(<span class="st">"uciml/autompg-dataset"</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(path <span class="op">+</span> <span class="st">'/auto-mpg.csv'</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="103">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mpg</th>
+<th data-quarto-table-cell-role="th">cylinders</th>
+<th data-quarto-table-cell-role="th">displacement</th>
+<th data-quarto-table-cell-role="th">horsepower</th>
+<th data-quarto-table-cell-role="th">weight</th>
+<th data-quarto-table-cell-role="th">acceleration</th>
+<th data-quarto-table-cell-role="th">model year</th>
+<th data-quarto-table-cell-role="th">origin</th>
+<th data-quarto-table-cell-role="th">car name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>18.0</td>
+<td>8</td>
+<td>307.0</td>
+<td>130</td>
+<td>3504</td>
+<td>12.0</td>
+<td>70</td>
+<td>1</td>
+<td>chevrolet chevelle malibu</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>15.0</td>
+<td>8</td>
+<td>350.0</td>
+<td>165</td>
+<td>3693</td>
+<td>11.5</td>
+<td>70</td>
+<td>1</td>
+<td>buick skylark 320</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>18.0</td>
+<td>8</td>
+<td>318.0</td>
+<td>150</td>
+<td>3436</td>
+<td>11.0</td>
+<td>70</td>
+<td>1</td>
+<td>plymouth satellite</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>16.0</td>
+<td>8</td>
+<td>304.0</td>
+<td>150</td>
+<td>3433</td>
+<td>12.0</td>
+<td>70</td>
+<td>1</td>
+<td>amc rebel sst</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>17.0</td>
+<td>8</td>
+<td>302.0</td>
+<td>140</td>
+<td>3449</td>
+<td>10.5</td>
+<td>70</td>
+<td>1</td>
+<td>ford torino</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>You should try to work on this problem by yourself.</p>
+</blockquote>
+</section>
+<section id="further-readings" class="level1">
+<h1>Further readings</h1>
+<ul>
+<li>Graphical tools:
+<ul>
+<li><a href="https://matplotlib.org/stable/index.html"><code>matplotlib</code></a></li>
+<li><a href="https://seaborn.pydata.org/"><code>seaborn</code></a></li>
+<li><a href="https://plotly.com/python/"><code>plotly</code></a></li>
+</ul></li>
+<li><a href="https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.Ridge.html">Ridge, Sklearn</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html">Lasso, Sklearn</a></li>
+<li><a href="https://www.statlearning.com/">Chapter 5, Introduction to Statistical Learning, James et al.&nbsp;(2023)</a></li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
