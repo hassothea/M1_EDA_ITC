@@ -1,7 +1,6 @@
 # **Exploratory Data Analysis & Unsupervised Learning**
-<img src="./img/AMS_logo.png#right" style="width:0.6in" />
-<img src="./img/itc.png#left"
-style="position: relative; bottom: 5px;width:0.4in" />
+<img src="./img/AMS_logo.png#right" style="width:0.4in"/>
+<img src="./img/itc.png#left" style="position: relative; bottom: 5px;width:0.4in"/>
 <a href="https://hassothea.github.io/">Lecturer: HAS Sothea, PhD</a>
 
 - [👋 Introduction](#-introduction)
@@ -85,8 +84,7 @@ technical and general audiences.
 
 # 📋 Course session
 
-> **Visit the course webpage:**
-> <a href="https://hassothea.github.io/M1_EDA_ITC/" target="_blank"></a>
+> **Visit the course webpage:** <a href="https://hassothea.github.io/M1_EDA_ITC/" target="_blank"></a>
 
 # 📋 Midterms, Exams and Projects
 
@@ -173,4 +171,5 @@ papers, and online courses, to further your understanding of
   target="_blank">R for Data Science, Hadley W. and Garrett G.</a>
 
 ------------------------------------------------------------------------
+
 
