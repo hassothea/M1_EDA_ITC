@@ -84,7 +84,7 @@ technical and general audiences.
 
 # 📋 Course session
 
-> **Visit the course webpage:** <a href="https://hassothea.github.io/M1_EDA_ITC/" target="_blank"></a>
+> **Visit the course webpage:** <a href="https://hassothea.github.io/M1_EDA_ITC/" target="_blank">M1-DAS: EDA & Unsupervised Learning</a>
 
 # 📋 Midterms, Exams and Projects
 
@@ -171,5 +171,6 @@ papers, and online courses, to further your understanding of
   target="_blank">R for Data Science, Hadley W. and Garrett G.</a>
 
 ------------------------------------------------------------------------
+
 
 
