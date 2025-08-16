@@ -1,9 +1,8 @@
 # **Exploratory Data Analysis & Unsupervised Learning**
-<img src="./img/AMS_logo.png#right" style="width:0.625in" />
+<img src="./img/AMS_logo.png#right" style="width:0.6in" />
 <img src="./img/itc.png#left"
-style="position: relative; bottom: 5px;width:0.41667in" />
-<a href="https://hassothea.github.io/">HAS Sothea, PhD</a>
-2025-08-16
+style="position: relative; bottom: 5px;width:0.4in" />
+<a href="https://hassothea.github.io/">Lecturer: HAS Sothea, PhD</a>
 
 - [👋 Introduction](#-introduction)
 - [📝 Course Criteria](#-course-criteria)
@@ -174,3 +173,4 @@ papers, and online courses, to further your understanding of
   target="_blank">R for Data Science, Hadley W. and Garrett G.</a>
 
 ------------------------------------------------------------------------
+
