@@ -17,7 +17,7 @@
 }
 
 .blue {
-    color: #345a8b;
+    color: #1656aa;
 }
 
 .light-blue {
@@ -25,7 +25,7 @@
 }
 
 .orange{
-    color: #e2a555;
+    color: #cba823;
 }
 
 .green {
@@ -36,34 +36,48 @@
     color: #dbdedf;
 }
 
-.vbr {
-    display: block;
-    padding: 0 -10px; /* Smaller padding */
+.yellow {
+    color: #ebc909;
 }
 
-.vbr20 {
+.purple {
+    color: #7513a3;
+}
+
+.sbr {
+    display: block;
+    margin: -5px 0; /* Smaller padding */
+}
+
+.up1 {
+    display: block;
+    margin: -10px 0; /* Adjust the vertical space as needed */
+    /*padding: -10px 0; /* Smaller padding */
+}
+
+.up2 {
     display: block;
     margin: -20px 0; /* Smaller padding */
 }
 
-.vbr30 {
+.up3 {
     display: block;
-    margin: -30px 0; /* Smaller padding */
+    margin: -30px 0;  /* Smaller padding */
 }
 
-.vbr40 {
+.up4 {
     display: block;
     margin: -40px 0; /* Smaller padding */
 }
 
-.vbr50 {
+.up5 {
     display: block;
     margin: -50px 0; /* Smaller padding */
 }
 
 .secbr {
     display: block;
-    margin: 50px 0; /* Adjust the vertical space as needed */
+    margin: 2px 0; /* Adjust the vertical space as needed */
 }
 
 .br0 {
@@ -86,6 +100,7 @@
     margin-top: 1px;  /* Set the space from the text above */
     font-weight: 500;
     color: #345a8b;
+    font-weight: 500;
 }
 
 .notes {
