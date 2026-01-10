@@ -279,11 +279,22 @@ window.Quarto = {
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                                        test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span><span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>C.</strong> Fit a SLR model using the most correlated input to predict the <code>Rings</code> of abalone. - Draw the fitted line on the previous scatterplot. - Compute <span class="math inline">\(R^2\)</span> and explain the observed value. - Compute Mean Suared Error on the test data (Test MSE). - Analyze the residuals and conclude.</p>
+<p><strong>C.</strong> Fit a SLR model using the most correlated input to predict the <code>Rings</code> of abalone.</p>
+<ul>
+<li><p>Draw the fitted line on the previous scatterplot.</p></li>
+<li><p>Compute <span class="math inline">\(R^2\)</span> and explain the observed value.</p></li>
+<li><p>Compute Mean Suared Error on the test data (Test MSE).</p></li>
+<li><p>Analyze the residuals and conclude.</p></li>
+</ul>
 <div id="cell-13" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>D.</strong> Fit MLR using all inputs. Compute: - Compute <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R_{\text{adj}}^2\)</span> and explain the observed value. - Compute Mean Suared Error on the test data (Test MSE). - Analyze the residuals and conclude.</p>
+<p><strong>D.</strong> Fit MLR using all inputs. Compute:</p>
+<ul>
+<li><p>Compute <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R_{\text{adj}}^2\)</span> and explain the observed value.</p></li>
+<li><p>Compute Mean Suared Error on the test data (Test MSE).</p></li>
+<li><p>Analyze the residuals and conclude.</p></li>
+</ul>
 <div id="cell-15" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -294,15 +305,25 @@ window.Quarto = {
 </section>
 <section id="polynomial-regression-and-regularized-linear-models" class="level2">
 <h2 class="anchored" data-anchor-id="polynomial-regression-and-regularized-linear-models">3. Polynomial Regression and Regularized Linear Models</h2>
-<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case. - Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting">slide 20</a>.</p>
+<p><strong>A.</strong> Build polynomial regression with different degree <span class="math inline">\(n\in\{2,3,...,10\}\)</span> of the best correlated input to predict <code>Rings</code>. Compute Test MSE for each case.</p>
+<ul>
+<li>Perform <span class="math inline">\(10\)</span>-fold Cross-validation to select the best degree <span class="math inline">\(n\)</span>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting">slide 20</a>.</li>
+</ul>
 <div id="cell-19" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>. - Compute Test MSE and compare it to the previous models.</p>
+<p><strong>B.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Ridge regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>.</p>
+<ul>
+<li>Compute Test MSE and compare it to the previous models.</li>
+</ul>
 <div id="cell-21" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>. - Compute Test MSE and compare it to the previous models. - How many inputs are retained by Lasso?</p>
+<p><strong>C.</strong> Perform <span class="math inline">\(10\)</span>-fold Cross-validation to tune the best penalization strength <span class="math inline">\(\alpha\)</span> of Lasso regression model for predicting <code>Rings</code>. Hint: see <a href="https://hassothea.github.io/Data_Analytics_AUPP/slides/Model_Evaluation_Refinement.html#/overcoming-overfitting-5">slide 24</a>.</p>
+<ul>
+<li><p>Compute Test MSE and compare it to the previous models.</p></li>
+<li><p>How many inputs are retained by Lasso?</p></li>
+</ul>
 <div id="cell-23" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To do</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
